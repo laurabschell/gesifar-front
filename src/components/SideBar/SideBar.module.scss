@@ -19,9 +19,7 @@
 }
 
 .menu {
-    >ul {
-        padding: 0;
-    }
+    text-decoration: none;
 
     &Button {
         margin: 3rem;
@@ -33,10 +31,8 @@
         border: none;
         padding: .8rem;
         cursor: pointer;
-        text-decoration: none;
 
         >h1 {
-            text-decoration: none;
             font-family: 'Roboto';
             font-style: normal;
             font-weight: 700;

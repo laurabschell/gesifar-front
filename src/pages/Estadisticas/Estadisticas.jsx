@@ -7,28 +7,21 @@ import { BarChart, PieChart } from '@mui/x-charts';
 const Estadisticas = () => {
     const url = 'http://gesifar-api.test/profesionalesController.php';
     const [professionals, setProfessionals] = useState([]);
-    const [id, setId] = useState('');
-    const [dni, setDni] = useState('');
-    const [name, setName] = useState('');
-    const [lastname, setLastname] = useState('');
-    const [profesion, setProfesion] = useState('');
-    const [area, setArea] = useState('');
-    const [operation, setOperation] = useState(1);
-    const [title, setTitle] = useState('');
 
     useEffect(() => {
-        getProducts();
+        getProfessionals();
     }, []);
 
-    const getProducts = async () => {
+    const getProfessionals = async () => {
         const respuesta = await axios.get(url);
         setProfessionals(respuesta.data);
     }
 
+    console.log(professionals);
+
 
     return (
         <Layout title="Estadisticas">
-            {/* <div className={style.title}>Estadisticas</div> */}
             <div className={style.container} >
                 <div className={style.containerChart}>
                     <h4>Profesionales registrados por Area</h4>
@@ -36,9 +29,10 @@ const Estadisticas = () => {
                         series={[
                             {
                                 data: [
-                                    { id: 0, value: 10, label: 'series A' },
-                                    { id: 1, value: 15, label: 'series B' },
-                                    { id: 2, value: 20, label: 'series C' },
+                                    { id: 0, value: 2, label: 'Traumatologia' },
+                                    { id: 1, value: 1, label: 'Radiologia' },
+                                    { id: 2, value: 5, label: 'Cirugia General' },
+                                    { id: 3, value: 1, label: 'Internacion' },
                                 ],
                             },
                         ]}
@@ -52,13 +46,13 @@ const Estadisticas = () => {
                         xAxis={[
                             {
                                 id: 'barCategories',
-                                data: ['bar A', 'bar B', 'bar C'],
+                                data: ['Medico', 'Enfermero', 'Medica', 'Enfermera'],
                                 scaleType: 'band',
                             },
                         ]}
                         series={[
                             {
-                                data: [2, 5, 3],
+                                data: [2, 3, 1, 2],
                             },
                         ]}
                         width={450}
