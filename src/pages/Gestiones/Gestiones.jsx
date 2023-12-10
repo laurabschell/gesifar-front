@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 export const Gestiones = () => {
   return (
-    <Layout >
+    <Layout title="Bienvenido!">
 
       <div className={style.boxesContainer}>
 

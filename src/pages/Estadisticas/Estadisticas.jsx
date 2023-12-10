@@ -27,8 +27,8 @@ const Estadisticas = () => {
 
 
     return (
-        <Layout>
-            <div className={style.title}>Estadisticas</div>
+        <Layout title="Estadisticas">
+            {/* <div className={style.title}>Estadisticas</div> */}
             <div className={style.container} >
                 <div className={style.containerChart}>
                     <h4>Profesionales registrados por Area</h4>

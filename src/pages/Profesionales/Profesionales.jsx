@@ -115,8 +115,8 @@ export const Profesionales = () => {
 
 
     return (
-        <Layout>
-            <div className={style.title}>Gestion de Profesionales Solicitantes</div>
+        <Layout title="Gestion de Profesionales Solicitantes">
+            {/* <div className={style.title}>Gestion de Profesionales Solicitantes</div> */}
             <div className='container-fluid'>
                 <div className='row mt-4'>
                     <div className='col-md-4 offset-md-8'>
