@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout/Layout'
-import style from "./Profesionales.module.scss"
 import axios from 'axios'
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -17,6 +16,11 @@ export const Profesionales = () => {
     const [area, setArea] = useState('');
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
+    const [searchDNI, setSearchDNI] = useState('');
+    const [searchName, setSearchName] = useState('');
+    const [searchLastname, setSearchLastname] = useState('');
+    const [searchArea, setSearchArea] = useState('');
+    const [searchProf, setSearchProf] = useState('');
 
     useEffect(() => {
         getProducts();
@@ -114,16 +118,42 @@ export const Profesionales = () => {
     }
 
 
+
     return (
         <Layout title="Gestion de Profesionales Solicitantes">
-            {/* <div className={style.title}>Gestion de Profesionales Solicitantes</div> */}
             <div className='container-fluid'>
-                <div className='row mt-4'>
-                    <div className='col-md-4 offset-md-8'>
+                <div className=' mt-4'>
+                    <div class="input-group" className='col-md-4 offset-8'>
                         <div className='d-grid mx-auto'>
                             <button onClick={() => openModal(1)} className='btn btn-lg btn-dark' data-bs-toggle='modal' data-bs-target='#modalProducts'>
                                 <i className='fa-solid fa-circle-plus'></i> Añadir nuevo profesional
                             </button>
+                        </div>
+                    </div>
+                    <div class="input-group" className='col-md-12'>
+                        <h5>Consultar por campo:</h5>
+                        <div class="row">
+
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchDNI(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por DNI</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchName(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Nombre</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchLastname(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Apellido</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchProf(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Profesion</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchArea(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Area</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -143,28 +173,30 @@ export const Profesionales = () => {
                                     </tr>
                                 </thead>
                                 <tbody className='table-group-divider'>
-                                    {professionals.map((professional, i) => (
-                                        <tr key={professional.id}>
-                                            {/* <td>{(i + 1)}</td> */}
-                                            <td>{professional.dni}</td>
-                                            <td>{professional.name}</td>
-                                            <td>{professional.lastname}</td>
-                                            <td>{professional.profesion}</td>
-                                            <td>{professional.area}</td>
-                                            <td>
-                                                <div className="btn-group" role="group">
+                                    {professionals.filter((item) => {
+                                        return item.dni.toLowerCase().includes(searchDNI) && item.name.toLowerCase().includes(searchName) && item.lastname.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea)
+                                    })
+                                        .map((item) => (
+                                            <tr key={item.id}>
+                                                <td>{item.dni}</td>
+                                                <td>{item.name}</td>
+                                                <td>{item.lastname}</td>
+                                                <td>{item.profesion}</td>
+                                                <td>{item.area}</td>
+                                                <td>
+                                                    <div className="btn-group" role="group">
 
-                                                    <button onClick={() => openModal(2, professional.id, professional.dni, professional.name, professional.lastname, professional.profesion, professional.area)}
-                                                        className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProducts'>
-                                                        <i className='fa-solid fa-edit'></i> Editar
-                                                    </button>
-                                                    <button onClick={() => deleteProduct(professional.id, professional.name)} className='btn btn-danger'>
-                                                        <i className='fa-solid fa-trash'></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
+                                                        <button onClick={() => openModal(2, item.id, item.dni, item.name, item.lastname, item.profesion, item.area)}
+                                                            className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProducts'>
+                                                            <i className='fa-solid fa-edit'></i> Editar
+                                                        </button>
+                                                        <button onClick={() => deleteProduct(item.id, item.name)} className='btn btn-danger'>
+                                                            <i className='fa-solid fa-trash'></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
                                     }
                                 </tbody>
                             </table>
