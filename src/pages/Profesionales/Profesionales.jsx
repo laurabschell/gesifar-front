@@ -124,22 +124,8 @@ export const Profesionales = () => {
         });
     }
 
-    // const filterProfessionals = () => {
-    //     setFilteredProfessionals(
-    //         professionals.filter((item) => item.dni.toLowerCase().includes(searchDNI) && item.name.toLowerCase().includes(searchName) && item.lastname.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea))
-    //     )
-    // }
-
-    // const componentPDF = useRef();
-
-    // const generatePDF = useReactToPrint({
-    //     content: () => componentPDF.current,
-    //     documentTitle: "Profesionales",
-    //     onAfterPrint: () => alert("Se genero el Listado para Imprimir")
-    // });
-
     const generatePDF = async () => {
-        const doc = new jsPDF({ orientation: "landscape" });
+        const doc = new jsPDF({ orientation: "portrait" });
 
         doc.autoTable({
             html: ".table-to-print",
