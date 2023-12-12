@@ -23,14 +23,14 @@ export const Profesionales = () => {
     const [searchLastname, setSearchLastname] = useState('');
     const [searchArea, setSearchArea] = useState('');
     const [searchProf, setSearchProf] = useState('');
-    const [filteredProfessionals, setFilteredProfessionals] = useState(professionals);
+    // const [filteredProfessionals, setFilteredProfessionals] = useState(professionals);
 
     useEffect(() => {
         getProfessionals();
-        setFilteredProfessionals(
-            professionals.filter((item) => item.dni.toLowerCase().includes(searchDNI) && item.name.toLowerCase().includes(searchName) && item.lastname.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea))
-        )
-    }, [professionals, searchArea, searchDNI, searchLastname, searchName, searchProf]);
+        // setFilteredProfessionals(
+        //     professionals.filter((item) => item.dni.toLowerCase().includes(searchDNI) && item.name.toLowerCase().includes(searchName) && item.lastname.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea))
+        // )
+    }, []);
 
     const getProfessionals = async () => {
         const respuesta = await axios.get(url);
@@ -187,7 +187,9 @@ export const Profesionales = () => {
                                     </tr>
                                 </thead>
                                 <tbody className='table-group-divider'>
-                                    {filteredProfessionals.map((item) => (
+                                    {professionals.filter((item) =>
+                                        item.dni.toLowerCase().includes(searchDNI) && item.name.toLowerCase().includes(searchName) && item.lastname.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea)
+                                    ).map((item) => (
                                         <tr key={item.id}>
                                             <td>{item.dni}</td>
                                             <td>{item.name}</td>
