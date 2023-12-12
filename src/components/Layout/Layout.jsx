@@ -3,12 +3,12 @@ import Header from '../Header/Header';
 import SideBar from '../SideBar/SideBar'
 import style from './Layout.module.scss';
 
-const Layout = ({ children }) => {
+const Layout = ({ children, title }) => {
     return (
         <div className={style.main}>
             <SideBar />
             <div className={style.box}>
-                <Header />
+                <Header title={title} />
                 {children}
             </div>
         </div>

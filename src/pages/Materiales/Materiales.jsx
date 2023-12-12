@@ -7,7 +7,6 @@ import withReactContent from 'sweetalert2-react-content';
 import { show_alerta } from '../../functions';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-//import moment from 'moment';
 import moment from 'moment-timezone';
 
 
@@ -160,11 +159,11 @@ export const Materiales = () => {
 
 
     return (
-        <Layout>
-            <div className={style.title}>Gestion de Materiales</div>
+        <Layout title="Gestion de Materiales">
+            {/* <div className={style.title}>Gestion de Materiales</div> */}
             <div className='container-fluid'>
                 <div className='row mt-4'>
-                    <div className='col-md-4 offset-md-9'>
+                    <div className='col-md-4 offset-md-8'>
                         <div className='d-grid mx-auto'>
                             <button onClick={() => openModal(1)} className='btn btn-lg btn-dark' data-bs-toggle='modal' data-bs-target='#modalProducts'>
                                 <i className='fa-solid fa-circle-plus'></i> Añadir nuevo Material

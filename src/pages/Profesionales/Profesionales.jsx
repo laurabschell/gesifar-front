@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout/Layout'
-import style from "./Profesionales.module.scss"
 import axios from 'axios'
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { show_alerta } from '../../functions';
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 export const Profesionales = () => {
     const url = 'http://gesifar-api.test/profesionalesController.php';
@@ -17,15 +18,25 @@ export const Profesionales = () => {
     const [area, setArea] = useState('');
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
+    const [searchDNI, setSearchDNI] = useState('');
+    const [searchName, setSearchName] = useState('');
+    const [searchLastname, setSearchLastname] = useState('');
+    const [searchArea, setSearchArea] = useState('');
+    const [searchProf, setSearchProf] = useState('');
+    // const [filteredProfessionals, setFilteredProfessionals] = useState(professionals);
 
     useEffect(() => {
-        getProducts();
+        getProfessionals();
+        // setFilteredProfessionals(
+        //     professionals.filter((item) => item.dni.toLowerCase().includes(searchDNI) && item.name.toLowerCase().includes(searchName) && item.lastname.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea))
+        // )
     }, []);
 
-    const getProducts = async () => {
+    const getProfessionals = async () => {
         const respuesta = await axios.get(url);
         setProfessionals(respuesta.data);
     }
+
     const openModal = (op, id, dni, name, lastname, profesion, area) => {
         setId('');
         setDni('');
@@ -87,7 +98,7 @@ export const Profesionales = () => {
             show_alerta(msj, tipo);
             if (tipo === 'success') {
                 document.getElementById('btnCerrar').click();
-                getProducts();
+                getProfessionals();
             }
         })
             .catch(function (error) {
@@ -113,27 +124,60 @@ export const Profesionales = () => {
         });
     }
 
+    const generatePDF = async () => {
+        const doc = new jsPDF({ orientation: "portrait" });
+
+        doc.autoTable({
+            html: ".table-to-print",
+        });
+
+        doc.save("profesionales-registrados-GESIFAR.pdf");
+    };
 
     return (
-        <Layout>
-            <div className={style.title}>Gestion de Profesionales Solicitantes</div>
+        <Layout title="Gestion de Profesionales Solicitantes">
             <div className='container-fluid'>
-                <div className='row mt-4'>
-                    <div className='col-md-4 offset-md-9'>
+                <div className=' mt-4'>
+                    <div class="input-group" className='col-md-4 offset-8'>
                         <div className='d-grid mx-auto'>
                             <button onClick={() => openModal(1)} className='btn btn-lg btn-dark' data-bs-toggle='modal' data-bs-target='#modalProducts'>
                                 <i className='fa-solid fa-circle-plus'></i> Añadir nuevo profesional
                             </button>
                         </div>
                     </div>
+                    <div class="input-group" className='col-md-12'>
+                        <h5>Consultar por campo:</h5>
+                        <div class="row">
+
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchDNI(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por DNI</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchName(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Nombre</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchLastname(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Apellido</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchProf(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Profesion</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchArea(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Area</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className='row mt-4'>
                     <div className='col-12 col-lg-12 offset-0'>
-                        <div className='table-responsive'>
-                            <table className='table table-bordered'>
-                                <thead>
+                        <div className='table-responsive container'>
+                            <table className='table-to-print table table-bordered table-striped table-fixed'>
+                                <thead class="sticky-top">
                                     <tr>
-                                        {/* <th>id</th> */}
                                         <th>DNI</th>
                                         <th>NOMBRE</th>
                                         <th>APELLIDO</th>
@@ -143,23 +187,24 @@ export const Profesionales = () => {
                                     </tr>
                                 </thead>
                                 <tbody className='table-group-divider'>
-                                    {professionals.map((professional, i) => (
-                                        <tr key={professional.id}>
-                                            {/* <td>{(i + 1)}</td> */}
-                                            <td>{professional.dni}</td>
-                                            <td>{professional.name}</td>
-                                            <td>{professional.lastname}</td>
-                                            <td>{professional.profesion}</td>
-                                            <td>{professional.area}</td>
+                                    {professionals.filter((item) =>
+                                        item.dni.toLowerCase().includes(searchDNI) && item.name.toLowerCase().includes(searchName) && item.lastname.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea)
+                                    ).map((item) => (
+                                        <tr key={item.id}>
+                                            <td>{item.dni}</td>
+                                            <td>{item.name}</td>
+                                            <td>{item.lastname}</td>
+                                            <td>{item.profesion}</td>
+                                            <td>{item.area}</td>
                                             <td>
                                                 <div className="btn-group" role="group">
 
-                                                    <button onClick={() => openModal(2, professional.id, professional.dni, professional.name, professional.lastname, professional.profesion, professional.area)}
+                                                    <button onClick={() => openModal(2, item.id, item.dni, item.name, item.lastname, item.profesion, item.area)}
                                                         className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProducts'>
                                                         <i className='fa-solid fa-edit'></i> Editar
                                                     </button>
-                                                    <button onClick={() => deleteProduct(professional.id, professional.name)} className='btn btn-danger'>
-                                                        <i className='fa-solid fa-trash'></i>
+                                                    <button onClick={() => deleteProduct(item.id, item.name)} className='btn btn-danger'>
+                                                        <i className='fa-solid fa-trash'></i> Eliminar
                                                     </button>
                                                 </div>
                                             </td>
@@ -172,6 +217,7 @@ export const Profesionales = () => {
                     </div>
                 </div>
             </div>
+            <button type="button" onClick={generatePDF} data-toggle="tooltip" data-placement="right" title="Generar listado filtrado en formato PDF" class="btn btn-success btn-lg"><i class="fa-regular fa-file-pdf"></i> Imprimir Resultados</button>
             <div id='modalProducts' className='modal fade' aria-hidden='true'>
                 <div className='modal-dialog'>
                     <div className='modal-content'>

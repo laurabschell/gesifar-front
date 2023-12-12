@@ -5,9 +5,15 @@ import { Link } from "react-router-dom";
 
 export const Gestiones = () => {
   return (
-    <Layout >
+    <Layout title="Bienvenido!">
 
       <div className={style.boxesContainer}>
+
+        <Link className={style.box} to="/profesionales">
+          <div className={style.boxTitle}>
+            <h1>Gestion de Profesionales Solicitantes</h1>
+          </div>
+        </Link>
 
         <Link className={style.box} to="/movimientos">
           <div className={style.boxTitle}>
@@ -15,11 +21,6 @@ export const Gestiones = () => {
           </div>
         </Link>
 
-        <Link className={style.box} to="/profesionales">
-          <div className={style.boxTitle}>
-            <h1>Gestion de Profesionales Solicitantes</h1>
-          </div>
-        </Link>
 
         <Link className={style.box} to="/personal">
           <div className={style.boxTitle}>
@@ -36,6 +37,13 @@ export const Gestiones = () => {
         <Link className={style.box} to="/ordencompra">
           <div className={style.boxTitle}>
             <h1>Gestion de Orden de Compra</h1>
+          </div>
+
+        </Link>
+
+        <Link className={style.box} to="/estadisticas">
+          <div className={style.boxTitle}>
+            <h1>Gestion de Estadisticas</h1>
           </div>
 
         </Link>

@@ -3,7 +3,7 @@ import style from './Header.module.scss'
 import UserDefault from '../../assets/user-image.png'
 import { useNavigate } from 'react-router-dom';
 
-const Header = () => {
+const Header = ({ title }) => {
   const navigate = useNavigate();
   const logout = () => {
     localStorage.removeItem('user', '');
@@ -12,7 +12,7 @@ const Header = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   return (
     <div className={style.container}>
-      <div className={style.title}>Bienvenido!</div>
+      <div className={style.title}>{title}</div>
       <div className={style.userBadge}>
         <img src={UserDefault} alt="user img" />
         <div className={style.userBadge_text}>

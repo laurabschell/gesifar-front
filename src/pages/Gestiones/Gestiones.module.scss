@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;1,300&display=swap');
 
 .boxesContainer {
-    width: 50%;
+    width: 30%;
     margin: auto;
     display: flex;
     flex-wrap: wrap;
@@ -13,15 +13,16 @@
     background: #6dc3e8;
     box-shadow: 0px 1px 2px hsla(0, 0%, 0%, 0.251);
     border-radius: 10px;
-    width: 250px;
+    width: max-content;
+    // width: 300px;
     padding: 1rem;
     margin: 1rem auto;
     cursor: pointer;
     text-decoration: none;
 
     &Title {
+        text-align: left;
         display: flex;
-        text-align: center;
         color: #000000;
         text-decoration: none;
 

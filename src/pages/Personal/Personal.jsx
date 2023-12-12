@@ -3,7 +3,7 @@ import Layout from '../../components/Layout/Layout'
 
 export const Personal = () => {
     return (
-        <Layout>
+        <Layout title="Gestion de Personal">
             Personal
         </Layout>
     )

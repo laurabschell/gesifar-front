@@ -3,7 +3,7 @@ import Layout from '../../components/Layout/Layout'
 
 export const Movimientos = () => {
     return (
-        <Layout>
+        <Layout title="Gestion de Movimientos">
             Movimientos
         </Layout>
     )
