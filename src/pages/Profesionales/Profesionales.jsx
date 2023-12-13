@@ -6,16 +6,25 @@ import withReactContent from 'sweetalert2-react-content';
 import { show_alerta } from '../../functions';
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import Select from 'react-select'
 
 export const Profesionales = () => {
     const url = 'http://gesifar-api.test/profesionalesController.php';
+    const urlProfesiones = 'http://gesifar-api.test/profesionesController.php';
+    const urlAreas = 'http://gesifar-api.test/areasController.php';
+    
     const [professionals, setProfessionals] = useState([]);
+    const [profesiones, setProfesiones] = useState([]);
+    const [areas, setAreas] = useState([]);
+
     const [id, setId] = useState('');
     const [dni, setDni] = useState('');
     const [name, setName] = useState('');
     const [lastname, setLastname] = useState('');
+
     const [profesion, setProfesion] = useState('');
     const [area, setArea] = useState('');
+
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
     const [searchDNI, setSearchDNI] = useState('');
@@ -27,17 +36,51 @@ export const Profesionales = () => {
 
     useEffect(() => {
         getProfessionals();
-        // setFilteredProfessionals(
-        //     professionals.filter((item) => item.dni.toLowerCase().includes(searchDNI) && item.name.toLowerCase().includes(searchName) && item.lastname.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea))
-        // )
+        getProfesiones();
+        getAreas();
+        
+        
     }, []);
 
     const getProfessionals = async () => {
         const respuesta = await axios.get(url);
         setProfessionals(respuesta.data);
     }
-
+    const getProfesiones  = async () => {
+        const response = await axios.get(urlProfesiones);
+        //setProfesiones(response.data);
+        const aProfesiones = response.data.map(p => ({
+               "label": p.descripcion,
+               "value": p.id
+        }))
+        const aProfesiones2 = [
+            {
+                "label": "Seleccione",
+                "value": ""
+            },
+            ...aProfesiones];
+    
+        setProfesiones(aProfesiones2);
+    }
+    const getAreas  = async () => {
+       const response = await axios.get(urlAreas);
+        
+        const aAreas = response.data.map(a => ({
+               "label": a.descripcion,
+               "value": a.id
+        }))
+        const aAreas2 = [
+            {
+                "label": "Seleccione",
+                "value": ""
+            },
+            ...aAreas];
+    
+        setAreas(aAreas2);
+    }
     const openModal = (op, id, dni, name, lastname, profesion, area) => {
+        console.log(profesiones);
+
         setId('');
         setDni('');
         setName('');
@@ -73,19 +116,13 @@ export const Profesionales = () => {
         else if (lastname.trim() === '') {
             show_alerta('Escribe el apellido del profesional', 'warning');
         }
-        else if (profesion.trim() === '') {
-            show_alerta('Escribe la profesion del profesional', 'warning');
-        }
-        else if (area === '') {
-            show_alerta('Escribe el area del profesional', 'warning');
-        }
         else {
             if (operation === 1) {
-                parametros = { dni: dni.trim(), name: name.trim(), lastname: lastname.trim(), profesion: profesion.trim(), area: area.trim() };
+                parametros = { dni: dni.trim(), name: name.trim(), lastname: lastname.trim() , profesion, area};
                 metodo = 'POST';
             }
             else {
-                parametros = { id: id, dni: dni.trim(), name: name.trim(), lastname: lastname.trim(), profesion: profesion.trim(), area: area.trim() };
+                parametros = { id: id, dni: dni.trim(), name: name.trim(), lastname: lastname.trim(), profesion, area };
                 metodo = 'PUT';
             }
             envarSolicitud(metodo, parametros);
@@ -239,18 +276,35 @@ export const Profesionales = () => {
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Apellido</span>
-                                <input type='text' id='apellido' className='form-control' placeholder='Apellido' value={lastname}
+                                <input type='text' id='apellido4' className='form-control' placeholder='Apellido4' value={lastname}
                                     onChange={(e) => setLastname(e.target.value)}></input>
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Profesion</span>
-                                <input type='text' id='profesion' className='form-control' placeholder='Profesion' value={profesion}
-                                    onChange={(e) => setProfesion(e.target.value)}></input>
+                                <Select id='profesion' options={profesiones}
+                                
+                                    onChange={(e) => {
+                                        console.log(e);
+                                        console.log(e.label);
+                                        
+                                        setProfesion(e.label)
+                                    }}
+
+                                />
+          
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Area</span>
-                                <input type='text' id='area' className='form-control' placeholder='Area' value={area}
-                                    onChange={(e) => setArea(e.target.value)}></input>
+                                <Select id='area' options={areas}
+                                
+                                onChange={(e) => {
+                                    console.log(e);
+                                    console.log(e.label);
+                                    
+                                    setArea(e.label)
+                                }}
+
+                            />
                             </div>
                             <div className='d-grid col-6 mx-auto'>
                                 <button onClick={() => validar()} className='btn btn-success'>

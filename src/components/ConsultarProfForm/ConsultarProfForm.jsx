@@ -14,8 +14,8 @@ const ConsultarProfForm = () => {
                     <input label="DNI" id="DNI" variant="outlined" />
                     <label for="Nombre">Nombre</label>
                     <input label="Nombre" id="Nombre" variant="outlined" />
-                    <label for="Apellido">Apellido</label>
-                    <input label="Apellido" id="Apellido" variant="outlined" />
+                    <label for="Apellido3">Apellido3</label>
+                    <input label="Apellido3" id="Apellido3" variant="outlined" />
                 </div>
 
                 <FormControl className={style.radioButtons}>
