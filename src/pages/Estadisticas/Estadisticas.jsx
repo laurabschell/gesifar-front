@@ -22,6 +22,7 @@ const Estadisticas = () => {
 
     return (
         <Layout title="Estadisticas">
+            
             <div className={style.container} >
                 <div className={style.containerChart}>
                     <h4>Profesionales registrados por Area</h4>
