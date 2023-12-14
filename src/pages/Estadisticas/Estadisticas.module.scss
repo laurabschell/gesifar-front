@@ -18,4 +18,32 @@
             padding-bottom: 1rem;
         }
     }
+
+
+}
+
+.banner {
+    height: fit-content;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    font-size: 16px;
+    border-radius: 5px;
+    font-weight: 500;
+    color: #000000;
+    padding: .5em 1em;
+    text-align: left;
+    width: 80%;
+    margin: 1rem auto;
+    background: #6dc3e8;
+    box-shadow: 0px 1px 2px hsla(0, 0%, 0%, 0.251);
+
+    >p {
+        width: 100%;
+    }
+
+    >i {
+        margin: 0 1em;
+        font-size: 30px;
+    }
 }
