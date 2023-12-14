@@ -33,9 +33,6 @@ export const Materiales = () => {
     }
     const openModal = (op, id, tipo, forma, presentacion, fecha_venc) => {
 
-
-        console.log('openmodal:', op);
-
         setId('');
         setTipo('');
         setForma('');
@@ -44,23 +41,10 @@ export const Materiales = () => {
         setOperation(op);
         if (op === 1) {
 
-            //let d = new Date();
-            let d = new Date(new Date().toDateString());
-
-            console.log('d.getMinutes()', d.getMinutes())
-            console.log('d.getTimezoneOffset()', d.getTimezoneOffset())
-
-            console.log('adjusted d:', d)
             setFecha_venc(new Date());
-            console.log('**fecha_venc:', fecha_venc)
-            console.log(JSON.stringify(fecha_venc));
-
             setTitle('Registrar Material');
         }
         else if (op === 2) {
-
-
-            console.log('tipo:', tipo)
 
             setTitle('Editar Datos');
             setId(id);
@@ -68,18 +52,9 @@ export const Materiales = () => {
             setForma(forma);
             setPresentacion(presentacion);
 
-            console.log('**tipo:', tipo)
-
-
             let d = new Date(fecha_venc);
-            //console.log('d.getMinutes()', d.getMinutes())
-            //console.log('d.getTimezoneOffset()', d.getTimezoneOffset())
-
-
-            d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
-            //console.log('adjusted d:',d)           
+            d.setMinutes(d.getMinutes() + d.getTimezoneOffset()); 
             setFecha_venc(d);
-            //console.log('** fecha_venc:', fecha_venc);
 
         }
         window.setTimeout(function () {
@@ -99,7 +74,6 @@ export const Materiales = () => {
         else {
             if (operation === 1) {
                 let x = moment(fecha_venc).format('YYYY-MM-DD');
-                console.log('----x:', x);
 
                 parametros = { tipo: tipo, forma: forma.trim(), presentacion: presentacion.trim(), fecha_venc: x };
                 metodo = 'POST';
@@ -108,12 +82,8 @@ export const Materiales = () => {
 
                 let d = new Date(fecha_venc);
                 d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
-                //
-
-                console.log('adjusted d:', d)
                 setFecha_venc(d);
                 let x = moment(fecha_venc).format('YYYY-MM-DD');
-                console.log('----x:', x);
 
                 parametros = { id: id, tipo: tipo.trim(), forma: forma.trim(), presentacion: presentacion.trim(), fecha_venc: x };
                 metodo = 'PUT';

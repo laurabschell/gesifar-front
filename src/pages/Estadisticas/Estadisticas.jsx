@@ -5,36 +5,66 @@ import axios from 'axios';
 import { BarChart, PieChart } from '@mui/x-charts';
 
 const Estadisticas = () => {
-    const url = 'http://gesifar-api.test/profesionalesController.php';
-    const [professionals, setProfessionals] = useState([]);
-
+    const url = 'http://gesifar-api.test/estadisticasController.php';
+    //const [professionals, setProfessionals] = useState([]);
+    const [dataArea, setDataArea] = useState([]);
+    const [dataProfesion, setDataProfesion] = useState([]);
+    const [dataProfesionCant, setDataProfesionCant] = useState([]);
+    
     useEffect(() => {
-        getProfessionals();
+        //getProfessionals();
+        getEstadisticas();
+       
     }, []);
 
-    const getProfessionals = async () => {
+    /*const getProfessionals = async () => {
         const respuesta = await axios.get(url);
         setProfessionals(respuesta.data);
-    }
+    }*/
+    const getEstadisticas = async () => {
 
-    console.log(professionals);
+        let response;
+        response = await axios.get(url + "?chartId=1");
+        console.log(url + "?chartId=1");
+        console.log(response);
+
+        const aDataArea = response.data.map(a => ({
+            "id": a.id,
+            "value": a.cant,
+            "label": a.descripcion
+        }))
+
+        setDataArea(aDataArea);
+
+        response = await axios.get(url + "?chartId=2");
+        const aDataProfesion = response.data.map(a => ({
+            "label": a.descripcion
+        }))
+        const aDataProfesionCant = response.data.map(a => ({
+            "value": a.cant
+        }))
+
+        setDataProfesion(aDataProfesion);
+        setDataProfesionCant(aDataProfesionCant);
+        
+    }
+    console.log("dataArea");
+    console.log(dataArea);
+    
+    console.log(dataProfesion);
+    console.log(dataProfesionCant);
 
 
     return (
         <Layout title="Estadisticas">
-            
             <div className={style.container} >
                 <div className={style.containerChart}>
                     <h4>Profesionales registrados por Area</h4>
+                        
                     <PieChart
                         series={[
                             {
-                                data: [
-                                    { id: 0, value: 2, label: 'Traumatologia' },
-                                    { id: 1, value: 1, label: 'Radiologia' },
-                                    { id: 2, value: 5, label: 'Cirugia General' },
-                                    { id: 3, value: 1, label: 'Internacion' },
-                                ],
+                                data:dataArea
                             },
                         ]}
                         width={400}
@@ -46,14 +76,19 @@ const Estadisticas = () => {
                     <BarChart
                         xAxis={[
                             {
-                                id: 'barCategories',
-                                data: ['Medico', 'Enfermero', 'Medica', 'Enfermera'],
+                                data:dataProfesion,			
                                 scaleType: 'band',
                             },
                         ]}
                         series={[
                             {
-                                data: [2, 3, 1, 2],
+                                /*data:dataProfesionCant,*/
+                                data: [
+                                    3,
+                                    1,
+                                    5,
+                                    2
+                                ],
                             },
                         ]}
                         width={450}
