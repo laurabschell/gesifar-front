@@ -2,7 +2,7 @@ import { React } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Login } from "./pages/Login/Login";
 import { Gestiones } from "./pages/Gestiones/Gestiones";
-import { Movimientos } from "./pages/Movimientos/Movimientos";
+import { Solicitudes } from "./pages/Solicitudes/Solicitudes";
 import { Profesionales } from "./pages/Profesionales/Profesionales";
 import { Personal } from "./pages/Personal/Personal";
 //import { Stock } from "./pages/Stock/Stock";
@@ -27,7 +27,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route element={<ProtectedRoute isAllowed={user} />} >
           <Route path="/gestiones" element={<Gestiones />} />
-          <Route path="/movimientos" element={<Movimientos />} />
+          <Route path="/solicitudes" element={<Solicitudes />} />
           <Route path="/profesionales" element={<Profesionales />} />
           <Route path="/materiales" element={<Materiales />} />
           <Route path="/personal" element={<Personal />} />

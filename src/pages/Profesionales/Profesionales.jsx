@@ -276,7 +276,7 @@ export const Profesionales = () => {
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Apellido</span>
-                                <input type='text' id='apellido4' className='form-control' placeholder='Apellido4' value={lastname}
+                                <input type='text' id='apellido' className='form-control' placeholder='Apellido' value={lastname}
                                     onChange={(e) => setLastname(e.target.value)}></input>
                             </div>
                             <div className='input-group mb-3'>
