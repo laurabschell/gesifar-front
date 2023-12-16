@@ -28,7 +28,7 @@ export const Solicitudes = () => {
     const [area, setArea] = useState('');
     const [fecha, setFecha] = useState(new Date());
     const [estado, setEstado] = useState('');
-    
+
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
 
@@ -37,7 +37,7 @@ export const Solicitudes = () => {
         getPersonas();
         getProfesionales();
         getAreas();
-        
+
     }, []);
 
     const getSolicitudes = async () => {
@@ -45,11 +45,11 @@ export const Solicitudes = () => {
         setSolicitudes(respuesta.data);
     }
     const getPersonas = async () => {
-        
+
         const response = await axios.get(urlPersonas);
         const aPersonas = response.data.map(p => ({
-               "label": p.nombre+" "+p.apellido,
-               "value": p.id
+            "label": p.nombre + " " + p.apellido,
+            "value": p.id
         }))
         const aPersonas2 = [
             {
@@ -57,7 +57,7 @@ export const Solicitudes = () => {
                 "value": ""
             },
             ...aPersonas];
-    
+
         setPersonas(aPersonas2);
 
     }
@@ -66,8 +66,8 @@ export const Solicitudes = () => {
         const response = await axios.get(urlProfesionales);
         //setProfesiones(response.data);
         const aProfesionales = response.data.map(p => ({
-               "label": p.nombre+" "+p.apellido,
-               "value": p.id
+            "label": p.nombre + " " + p.apellido,
+            "value": p.id
         }))
         const aProfesionales2 = [
             {
@@ -75,28 +75,28 @@ export const Solicitudes = () => {
                 "value": ""
             },
             ...aProfesionales];
-    
+
         setProfesionales(aProfesionales2);
 
     }
 
-    const getAreas  = async () => {
+    const getAreas = async () => {
         const response = await axios.get(urlAreas);
-         
-         const aAreas = response.data.map(a => ({
-                "label": a.descripcion,
-                "value": a.id
-         }))
-         const aAreas2 = [
-             {
-                 "label": "Seleccione",
-                 "value": ""
-             },
-             ...aAreas];
-     
-         setAreas(aAreas2);
-     }
-    
+
+        const aAreas = response.data.map(a => ({
+            "label": a.descripcion,
+            "value": a.id
+        }))
+        const aAreas2 = [
+            {
+                "label": "Seleccione",
+                "value": ""
+            },
+            ...aAreas];
+
+        setAreas(aAreas2);
+    }
+
     const openModal = (op, id, persona, profesional, area, fecha, estado) => {
         console.log('openmodal:', op);
 
@@ -138,29 +138,29 @@ export const Solicitudes = () => {
 
         console.log('parametros');
         console.log(parametros)
-            
+
         enviarSolicitud(metodo, parametros);
-}
-    
-const enviarSolicitud = async (metodo, parametros) => {
+    }
 
-    console.log(parametros)
-    await axios({ method: metodo, url: urlSolicitudes, data: parametros }).then(function (respuesta) {
+    const enviarSolicitud = async (metodo, parametros) => {
 
-        var tipo = respuesta.data[0];
-        var msj = respuesta.data[1];
-        show_alerta(msj, tipo);
-        
-        if (tipo === 'success') {
-            document.getElementById('btnCerrar').click();
-            getSolicitudes();
-        }
-    })
-        .catch(function (error) {
-            show_alerta('Error en la solicitud', 'error');
-            console.log(error);
-        });
-};
+        console.log(parametros)
+        await axios({ method: metodo, url: urlSolicitudes, data: parametros }).then(function (respuesta) {
+
+            var tipo = respuesta.data[0];
+            var msj = respuesta.data[1];
+            show_alerta(msj, tipo);
+
+            if (tipo === 'success') {
+                document.getElementById('btnCerrar').click();
+                getSolicitudes();
+            }
+        })
+            .catch(function (error) {
+                show_alerta('Error en la solicitud', 'error');
+                console.log(error);
+            });
+    };
 
 
     return (
@@ -187,7 +187,7 @@ const enviarSolicitud = async (metodo, parametros) => {
                                         <th>PROFESIONAL</th>
                                         <th>AREA</th>
                                         <th>FECHA</th>
-                                        <th>ESTADO</th>                                      
+                                        <th>ESTADO</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -196,12 +196,12 @@ const enviarSolicitud = async (metodo, parametros) => {
                                         <tr key={solicitud.id}>
                                             {/* <td>{(i + 1)}</td> */}
                                             <td>{solicitud.personal_resp}</td>
-                                            <td>{solicitud.profesional_solicitante}</td>                                            
+                                            <td>{solicitud.profesional_solicitante}</td>
                                             <td>{solicitud.area}</td>
                                             <td>{solicitud.fecha}</td>
                                             <td>{solicitud.estado}</td>
                                             <td>
-                                                
+
                                             </td>
                                         </tr>
                                     ))
@@ -221,32 +221,32 @@ const enviarSolicitud = async (metodo, parametros) => {
                         </div>
                         <div className='modal-body'>
                             <input type='hidden' id='id'></input>
-                            <div className='input-group mb-3' class='col'>'
+                            <div className='input-group mb-3' >'
 
                                 <span className='input-group-text'>Personal</span>
 
-                                <Select id='persona' options={personas} 
-                                
+                                <Select id='persona' options={personas} className={style.selectinput}
+
                                     onChange={(e) => {
                                         console.log(e);
                                         console.log(e.label);
-                                        
+
                                         setPersona(e.label)
                                     }}
 
                                 />
                             </div>
 
-                            <div className='input-group mb-3' class='col'>
+                            <div className='input-group mb-3' >
 
                                 <span className='input-group-text'>Profesional</span>
 
-                                <Select id='profesional' options={profesionales} 
-                                
+                                <Select id='profesional' options={profesionales} className={style.selectinput}
+
                                     onChange={(e) => {
                                         console.log(e);
                                         console.log(e.label);
-                                        
+
                                         setProfesional(e.label)
                                     }}
 
@@ -254,23 +254,23 @@ const enviarSolicitud = async (metodo, parametros) => {
                             </div>
                             <div class="w-100"></div>
 
-                            <div className='input-group mb-3' class='col'>
+                            <div className='input-group mb-3' >
 
                                 <span className='input-group-text'>Area</span>
 
-                                <Select id='area' options={areas} 
-                                
+                                <Select id='area' options={areas} className={style.selectinput}
+
                                     onChange={(e) => {
                                         console.log(e);
                                         console.log(e.label);
-                                        
+
                                         setArea(e.label)
                                     }}
 
                                 />
                             </div>
-                            
-                            <div className='input-group mb-3' class='col'>
+
+                            <div className='input-group mb-3' >
                                 <span className='input-group-text'>Fecha</span>
                                 <DatePicker
                                     dateFormat="yyyy-MM-dd"
@@ -279,7 +279,7 @@ const enviarSolicitud = async (metodo, parametros) => {
                                 />
                             </div>
                             <div class="w-100"></div>
-                            
+
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Estado</span>
                                 <select id='estado' value={estado}
