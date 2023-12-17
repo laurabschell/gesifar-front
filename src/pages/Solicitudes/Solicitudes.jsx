@@ -2,63 +2,87 @@ import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout/Layout'
 import style from "./Solicitudes.module.scss"
 import axios from 'axios'
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 import { show_alerta } from '../../functions';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment-timezone';
 import Select from 'react-select'
-
+import Table from "../../components/table"
 
 export const Solicitudes = () => {
     const urlSolicitudes = 'http://gesifar-api.test/solicitudesController.php';
-    const urlPersonas = 'http://gesifar-api.test/personasController.php';
+    const urlResponsables = 'http://gesifar-api.test/responsablesController.php';
     const urlProfesionales = 'http://gesifar-api.test/profesionalesController.php';
     const urlAreas = 'http://gesifar-api.test/areasController.php';
+    const urlMateriales = 'http://gesifar-api.test/materialesController.php';
 
     const [solicitudes, setSolicitudes] = useState([]);
-    const [personas, setPersonas] = useState('');
+    const [responsables, setResponsables] = useState('');
     const [profesionales, setProfesionales] = useState('');
     const [areas, setAreas] = useState('');
+    const [materiales, setMateriales] = useState('');
 
     const [id, setId] = useState('');
-    const [persona, setPersona] = useState('');
+    const [responsable, setResponsable] = useState('');
     const [profesional, setProfesional] = useState('');
     const [area, setArea] = useState('');
     const [fecha, setFecha] = useState(new Date());
     const [estado, setEstado] = useState('');
 
+    const [material, setMaterial] = useState('');
+    const [cantidad, setCantidad] = useState('');
+
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
+    
+    const [rows, initRow] = useState([]);
+  
+    const addRowTable = () => {
+      
+      console.log("material:" , material)
+    
+      const data = {
+        material: material,
+        cantidad: cantidad,
+      };
+  
+      initRow([...rows, data]);
+  
+    };
+
+    const tableRowRemove = (index) => {
+        const dataRow = [...rows];
+        dataRow.splice(index, 1);
+        initRow(dataRow);
+    };
 
     useEffect(() => {
         getSolicitudes();
-        getPersonas();
+        getResponsables();
         getProfesionales();
         getAreas();
-
+        getMateriales();
     }, []);
 
     const getSolicitudes = async () => {
         const respuesta = await axios.get(urlSolicitudes);
         setSolicitudes(respuesta.data);
     }
-    const getPersonas = async () => {
+    const getResponsables = async () => {
 
-        const response = await axios.get(urlPersonas);
-        const aPersonas = response.data.map(p => ({
+        const response = await axios.get(urlResponsables);
+        const aResponsables = response.data.map(p => ({
             "label": p.nombre + " " + p.apellido,
             "value": p.id
         }))
-        const aPersonas2 = [
+        const aResponsables2 = [
             {
                 "label": "Seleccione",
                 "value": ""
             },
-            ...aPersonas];
+            ...aResponsables];
 
-        setPersonas(aPersonas2);
+        setResponsables(aResponsables2);
 
     }
     const getProfesionales = async () => {
@@ -97,30 +121,39 @@ export const Solicitudes = () => {
         setAreas(aAreas2);
     }
 
-    const openModal = (op, id, persona, profesional, area, fecha, estado) => {
+    const getMateriales = async () => {
+        const response = await axios.get(urlMateriales);
+
+        const aMateriales = response.data.map(a => ({
+            "label": a.nombre,
+            "value": a.id
+        }))
+        const aMateriales2 = [
+            {
+                "label": "Seleccione",
+                "value": ""
+            },
+            ...aMateriales];
+
+        setMateriales(aMateriales2);
+    }
+
+    const openModal = (op, id, responsable, profesional, area, fecha, estado) => {
         console.log('openmodal:', op);
 
         setId('');
-        setPersona('');
+        setResponsable('');
         setProfesional('');
         setArea('');
         setFecha(null);
         setEstado('')
         setOperation(op);
         if (op === 1) {
-
-            let d = new Date(new Date().toDateString());
-
-            console.log('d.getMinutes()', d.getMinutes())
-            console.log('d.getTimezoneOffset()', d.getTimezoneOffset())
-
-            console.log('adjusted d:', d)
             setFecha(new Date());
-
             setTitle('Registrar Solicitud');
         }
         window.setTimeout(function () {
-            //document.getElementById('tipo').focus();
+            document.getElementById('responsable').focus();
         }, 500);
     }
 
@@ -128,18 +161,30 @@ export const Solicitudes = () => {
         var parametros;
         var metodo;
 
-        if (operation === 1) {
-            let x = moment(fecha).format('YYYY-MM-DD');
-            console.log('----x:', x);
-
-            parametros = { persona: persona, profesional: profesional, area: area, fecha: x, estado: estado };
-            metodo = 'POST';
+        if (responsable.trim() === '') {
+            show_alerta('Indique el Responsable', 'warning');
         }
-
-        console.log('parametros');
-        console.log(parametros)
-
-        enviarSolicitud(metodo, parametros);
+        else if (profesional.trim() === '') {
+            show_alerta('Indique el Profesional', 'warning');
+        }
+        else if (area.trim() === '') {
+            show_alerta('Indique el Area', 'warning');
+        }
+        else if (estado.trim() === '') {
+            show_alerta('Indique el Estado', 'warning');
+        }
+        else if (rows.length === 0) {
+            show_alerta('Añada un material', 'warning');
+        }
+        else {
+            if (operation === 1) {
+                let x = moment(fecha).format('YYYY-MM-DD');
+                
+                parametros = { responsable: responsable, profesional: profesional, area: area, fecha: x, estado: estado, rows: rows };
+                metodo = 'POST';
+            }
+            enviarSolicitud(metodo, parametros);
+        }
     }
 
     const enviarSolicitud = async (metodo, parametros) => {
@@ -165,7 +210,7 @@ export const Solicitudes = () => {
 
     return (
         <Layout title="Gestion de Solicitudes">
-            {/* <div className={style.title}>Gestion de Solicitudes</div> */}
+            
             <div className='container-fluid'>
                 <div className='row mt-4'>
                     <div className='col-md-4 offset-md-8'>
@@ -225,13 +270,13 @@ export const Solicitudes = () => {
 
                                 <span className='input-group-text'>Personal</span>
 
-                                <Select id='persona' options={personas} className={style.selectinput}
+                                <Select id='responsable' options={responsables} className={style.selectinput}
 
                                     onChange={(e) => {
                                         console.log(e);
                                         console.log(e.label);
 
-                                        setPersona(e.label)
+                                        setResponsable(e.label)
                                     }}
 
                                 />
@@ -296,6 +341,33 @@ export const Solicitudes = () => {
                                     <option value="PENDIENTE">PENDIENTE</option>
                                     <option value="ENTREGADO">ENTREGADO</option>
                                 </select>
+                            </div>
+
+                            <div className='input-group mb-3' width="100%">
+                                <span className='input-group-text'>Nombre</span>
+                                <Select id='material' options={materiales} 
+                                className={style.selectinput30} 
+                                    
+                                    onChange={(e) => {
+                                        setMaterial(e.label)
+                                    }}
+
+                                />
+                                <span className='input-group-text'>Cantidad</span>
+                                <input type='text' id='cantidad' 
+                                placeholder='cantidad' 
+                                className={style.selectinput30}
+
+                                    onChange={(e) => setCantidad(e.target.value)}>
+                                    
+                                </input>
+                                
+                                <Table m={{ material, cantidad }} 
+                                rows={rows}
+                                addRowTable={addRowTable}
+                                tableRowRemove={tableRowRemove}
+                                />
+                                                          
                             </div>
 
                             <div className='d-grid col-6 mx-auto'>

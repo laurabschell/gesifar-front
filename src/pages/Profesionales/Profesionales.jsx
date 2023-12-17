@@ -19,8 +19,8 @@ export const Profesionales = () => {
 
     const [id, setId] = useState('');
     const [dni, setDni] = useState('');
-    const [name, setName] = useState('');
-    const [lastname, setLastname] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [apellido, setApellido] = useState('');
 
     const [profesion, setProfesion] = useState('');
     const [area, setArea] = useState('');
@@ -78,15 +78,15 @@ export const Profesionales = () => {
     
         setAreas(aAreas2);
     }
-    const openModal = (op, id, dni, name, lastname, profesion, area) => {
+    const openModal = (op, id, dni, nombre, apellido, profesion, area) => {
         console.log(profesiones);
 
         setId('');
         setDni('');
-        setName('');
-        setLastname('');
+        setNombre('');
+        setApellido('');
         setProfesion('');
-        setArea('');
+        setArea(null);
         setOperation(op);
         if (op === 1) {
             setTitle('Registrar Profesional');
@@ -95,13 +95,13 @@ export const Profesionales = () => {
             setTitle('Editar Datos');
             setId(id);
             setDni(dni);
-            setName(name);
-            setLastname(lastname);
+            setNombre(nombre);
+            setApellido(apellido);
             setProfesion(profesion);
             setArea(area);
         }
         window.setTimeout(function () {
-            document.getElementById('nombre').focus();
+            document.getElementById('dni').focus();
         }, 500);
     }
     const validar = () => {
@@ -110,25 +110,25 @@ export const Profesionales = () => {
         if (dni.trim() === '') {
             show_alerta('Escribe el DNI del profesional', 'warning');
         }
-        else if (name.trim() === '') {
+        else if (nombre.trim() === '') {
             show_alerta('Escribe el nombre del profesional', 'warning');
         }
-        else if (lastname.trim() === '') {
+        else if (apellido.trim() === '') {
             show_alerta('Escribe el apellido del profesional', 'warning');
         }
         else {
             if (operation === 1) {
-                parametros = { dni: dni.trim(), name: name.trim(), lastname: lastname.trim() , profesion, area};
+                parametros = { dni: dni.trim(), nombre: nombre.trim(), apellido: apellido.trim() , profesion, area};
                 metodo = 'POST';
             }
             else {
-                parametros = { id: id, dni: dni.trim(), name: name.trim(), lastname: lastname.trim(), profesion, area };
+                parametros = { id: id, dni: dni.trim(), nombre: nombre.trim(), apellido: apellido.trim(), profesion, area };
                 metodo = 'PUT';
             }
-            envarSolicitud(metodo, parametros);
+            enviarSolicitud(metodo, parametros);
         }
     }
-    const envarSolicitud = async (metodo, parametros) => {
+    const enviarSolicitud = async (metodo, parametros) => {
         await axios({ method: metodo, url: url, data: parametros }).then(function (respuesta) {
             var tipo = respuesta.data[0];
             var msj = respuesta.data[1];
@@ -144,16 +144,16 @@ export const Profesionales = () => {
             });
     }
 
-    const deleteProduct = (id, name) => {
+    const deleteProduct = (id, nombre) => {
         const MySwal = withReactContent(Swal);
         MySwal.fire({
-            title: '¿Seguro de eliminar el profesional ' + name + ' ?',
+            title: '¿Seguro de eliminar el profesional ' + nombre + ' ?',
             icon: 'question', text: 'No se podrá dar marcha atrás',
             showCancelButton: true, confirmButtonText: 'Si, eliminar', cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
                 setId(id);
-                envarSolicitud('DELETE', { id: id });
+                enviarSolicitud('DELETE', { id: id });
             }
             else {
                 show_alerta('Los datos del profesional NO fueron eliminados', 'info');
@@ -225,22 +225,22 @@ export const Profesionales = () => {
                                 </thead>
                                 <tbody className='table-group-divider'>
                                     {professionals.filter((item) =>
-                                        item.dni.toLowerCase().includes(searchDNI) && item.name.toLowerCase().includes(searchName) && item.lastname.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea)
+                                        item.dni.includes(searchDNI) && item.nombre.toLowerCase().includes(searchName) && item.apellido.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea)
                                     ).map((item) => (
                                         <tr key={item.id}>
                                             <td>{item.dni}</td>
-                                            <td>{item.name}</td>
-                                            <td>{item.lastname}</td>
+                                            <td>{item.nombre}</td>
+                                            <td>{item.apellido}</td>
                                             <td>{item.profesion}</td>
                                             <td>{item.area}</td>
                                             <td>
                                                 <div className="btn-group" role="group">
 
-                                                    <button onClick={() => openModal(2, item.id, item.dni, item.name, item.lastname, item.profesion, item.area)}
+                                                    <button onClick={() => openModal(2, item.id, item.dni, item.nombre, item.apellido, item.profesion, item.area)}
                                                         className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProducts'>
                                                         <i className='fa-solid fa-edit'></i> Editar
                                                     </button>
-                                                    <button onClick={() => deleteProduct(item.id, item.name)} className='btn btn-danger'>
+                                                    <button onClick={() => deleteProduct(item.id, item.nombre)} className='btn btn-danger'>
                                                         <i className='fa-solid fa-trash'></i> Eliminar
                                                     </button>
                                                 </div>
@@ -271,13 +271,13 @@ export const Profesionales = () => {
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Nombre</span>
-                                <input type='text' id='nombre' className='form-control' placeholder='Nombre' value={name}
-                                    onChange={(e) => setName(e.target.value)}></input>
+                                <input type='text' id='nombre' className='form-control' placeholder='Nombre' value={nombre}
+                                    onChange={(e) => setNombre(e.target.value)}></input>
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Apellido</span>
-                                <input type='text' id='apellido' className='form-control' placeholder='Apellido' value={lastname}
-                                    onChange={(e) => setLastname(e.target.value)}></input>
+                                <input type='text' id='apellido' className='form-control' placeholder='Apellido' value={apellido}
+                                    onChange={(e) => setApellido(e.target.value)}></input>
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Profesion</span>
@@ -296,6 +296,7 @@ export const Profesionales = () => {
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Area</span>
                                 <Select id='area' options={areas}
+                                value=''
                                 
                                 onChange={(e) => {
                                     console.log(e);
