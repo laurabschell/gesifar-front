@@ -88,7 +88,7 @@ export const Solicitudes = () => {
     const getProfesionales = async () => {
 
         const response = await axios.get(urlProfesionales);
-        //setProfesiones(response.data);
+        
         const aProfesionales = response.data.map(p => ({
             "label": p.nombre + " " + p.apellido,
             "value": p.id
@@ -139,17 +139,21 @@ export const Solicitudes = () => {
     }
 
     const openModal = (op, id, responsable, profesional, area, fecha, estado) => {
-        console.log('openmodal:', op);
+
 
         setId('');
-        setResponsable('');
-        setProfesional('');
-        setArea('');
+        setResponsable('Seleccione');
+        setProfesional('Seleccione');
+        setArea('Seleccione');
         setFecha(null);
         setEstado('')
         setOperation(op);
+        /*responsable="Seleccione";
+        console.log(responsable);*/
+
         if (op === 1) {
             setFecha(new Date());
+            initRow([]);
             setTitle('Registrar Solicitud');
         }
         window.setTimeout(function () {
@@ -270,7 +274,9 @@ export const Solicitudes = () => {
 
                                 <span className='input-group-text'>Personal</span>
 
-                                <Select id='responsable' options={responsables} className={style.selectinput}
+                                <Select id='responsable' options={responsables} 
+                                    className={style.selectinput}
+                                    value={responsables.find(item => item.label === responsable)}
 
                                     onChange={(e) => {
                                         console.log(e);
@@ -283,10 +289,10 @@ export const Solicitudes = () => {
                             </div>
 
                             <div className='input-group mb-3' >
-
                                 <span className='input-group-text'>Profesional</span>
-
-                                <Select id='profesional' options={profesionales} className={style.selectinput}
+                                <Select id='profesional' options={profesionales} 
+                                    className={style.selectinput}
+                                    value={profesionales.find(item => item.label === profesional)}
 
                                     onChange={(e) => {
                                         console.log(e);
@@ -300,10 +306,10 @@ export const Solicitudes = () => {
                             <div class="w-100"></div>
 
                             <div className='input-group mb-3' >
-
                                 <span className='input-group-text'>Area</span>
-
-                                <Select id='area' options={areas} className={style.selectinput}
+                                <Select id='area' options={areas} 
+                                    className={style.selectinput}
+                                    value={areas.find(item => item.label === area)}
 
                                     onChange={(e) => {
                                         console.log(e);

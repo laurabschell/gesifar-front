@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout/Layout'
+import style from "./Profesionales.module.scss"
 import axios from 'axios'
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -32,7 +33,6 @@ export const Profesionales = () => {
     const [searchLastname, setSearchLastname] = useState('');
     const [searchArea, setSearchArea] = useState('');
     const [searchProf, setSearchProf] = useState('');
-    // const [filteredProfessionals, setFilteredProfessionals] = useState(professionals);
 
     useEffect(() => {
         getProfessionals();
@@ -46,12 +46,12 @@ export const Profesionales = () => {
         const respuesta = await axios.get(url);
         setProfessionals(respuesta.data);
     }
-    const getProfesiones  = async () => {
-        const response = await axios.get(urlProfesiones);
-        //setProfesiones(response.data);
-        const aProfesiones = response.data.map(p => ({
-               "label": p.descripcion,
-               "value": p.id
+    const getProfesiones  = async () => {   
+        const response = await axios.get(urlProfesiones);       
+
+        const aProfesiones = response.data.map(i => ({
+               "label": i.descripcion,
+               "value": i.id
         }))
         const aProfesiones2 = [
             {
@@ -65,9 +65,9 @@ export const Profesionales = () => {
     const getAreas  = async () => {
        const response = await axios.get(urlAreas);
         
-        const aAreas = response.data.map(a => ({
-               "label": a.descripcion,
-               "value": a.id
+        const aAreas = response.data.map(i => ({
+               "label": i.descripcion,
+               "value": i.id
         }))
         const aAreas2 = [
             {
@@ -79,26 +79,27 @@ export const Profesionales = () => {
         setAreas(aAreas2);
     }
     const openModal = (op, id, dni, nombre, apellido, profesion, area) => {
-        console.log(profesiones);
-
+        
         setId('');
         setDni('');
         setNombre('');
         setApellido('');
-        setProfesion('');
-        setArea(null);
+        setProfesion('Seleccione');
+        setArea('Seleccione');
         setOperation(op);
         if (op === 1) {
             setTitle('Registrar Profesional');
         }
         else if (op === 2) {
             setTitle('Editar Datos');
+
             setId(id);
             setDni(dni);
             setNombre(nombre);
             setApellido(apellido);
             setProfesion(profesion);
             setArea(area);
+
         }
         window.setTimeout(function () {
             document.getElementById('dni').focus();
@@ -282,29 +283,27 @@ export const Profesionales = () => {
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Profesion</span>
                                 <Select id='profesion' options={profesiones}
-                                
+                                    className={style.selectinput}
+                                    value={profesiones.find(item => item.label === profesion)}
+
                                     onChange={(e) => {
                                         console.log(e);
                                         console.log(e.label);
-                                        
                                         setProfesion(e.label)
                                     }}
-
                                 />
           
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Area</span>
-                                <Select id='area' options={areas}
-                                value=''
-                                
-                                onChange={(e) => {
-                                    console.log(e);
-                                    console.log(e.label);
-                                    
-                                    setArea(e.label)
-                                }}
+                                <Select id='area' options={areas}                                
+                                    value={areas.find(item => item.label === area)}
 
+                                    onChange={(e) => {
+                                        console.log(e);
+                                        console.log(e.label);
+                                        setArea(e.label)
+                                    }}
                             />
                             </div>
                             <div className='d-grid col-6 mx-auto'>
