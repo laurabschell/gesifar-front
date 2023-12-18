@@ -9,12 +9,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment-timezone';
 
-
-export const Materiales = () => {
+export const Materiales = () => { 
 
     const url = 'http://gesifar-api.test/materialesController.php';
     const [materiales, setMateriales] = useState([]);
     const [id, setId] = useState('');
+    const [nombre, setnombre] = useState('');
     const [tipo, setTipo] = useState('');
     const [forma, setForma] = useState('');
     const [presentacion, setPresentacion] = useState('');
@@ -31,66 +31,64 @@ export const Materiales = () => {
         const respuesta = await axios.get(url);
         setMateriales(respuesta.data);
     }
-    const openModal = (op, id, tipo, forma, presentacion, fecha_venc) => {
+    const openModal = (op, id, nombre, tipo, forma, presentacion, fecha_venc) => {
+       
 
-
-        console.log('openmodal:', op);
+        console.log('openmodal:',op);
 
         setId('');
+        setnombre('');
         setTipo('');
         setForma('');
         setPresentacion('');
         setFecha_venc(null);
         setOperation(op);
+
         if (op === 1) {
 
-            //let d = new Date();
             let d = new Date(new Date().toDateString());
-
+            
             console.log('d.getMinutes()', d.getMinutes())
-            console.log('d.getTimezoneOffset()', d.getTimezoneOffset())
-
-            console.log('adjusted d:', d)
-            setFecha_venc(new Date());
+            console.log('d.getTimezoneOffset()', d.getTimezoneOffset())          
+   
+            console.log('adjusted d:',d)
+            setFecha_venc(new Date());            
             console.log('**fecha_venc:', fecha_venc)
-            console.log(JSON.stringify(fecha_venc));
-
+            console.log( JSON.stringify(fecha_venc) );
+            
             setTitle('Registrar Material');
         }
         else if (op === 2) {
-
-
-            console.log('tipo:', tipo)
-
+         
             setTitle('Editar Datos');
             setId(id);
+            setnombre(nombre);
             setTipo(tipo);
             setForma(forma);
             setPresentacion(presentacion);
-
+            
             console.log('**tipo:', tipo)
 
-
             let d = new Date(fecha_venc);
-            //console.log('d.getMinutes()', d.getMinutes())
-            //console.log('d.getTimezoneOffset()', d.getTimezoneOffset())
-
-
-            d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
-            //console.log('adjusted d:',d)           
-            setFecha_venc(d);
-            //console.log('** fecha_venc:', fecha_venc);
+            d.setMinutes(d.getMinutes() + d.getTimezoneOffset());          
+            setFecha_venc(d);     
 
         }
         window.setTimeout(function () {
-            document.getElementById('tipo').focus();
+            document.getElementById('nombre').focus();
         }, 500);
     }
     const validar = () => {
         var parametros;
         var metodo;
 
-        if (forma.trim() === '') {
+        if (nombre.trim() === '') {
+            show_alerta('Escriba el nombre', 'warning');
+        }
+        else if (tipo.trim() === '') {
+            show_alerta('Indique el Tipo', 'warning');
+        }
+        else if (forma.trim() === '') {
             show_alerta('Escriba la Forma Farmaceutica', 'warning');
         }
         else if (presentacion.trim() === '') {
@@ -99,33 +97,30 @@ export const Materiales = () => {
         else {
             if (operation === 1) {
                 let x = moment(fecha_venc).format('YYYY-MM-DD');
-                console.log('----x:', x);
-
-                parametros = { tipo: tipo, forma: forma.trim(), presentacion: presentacion.trim(), fecha_venc: x };
+                console.log('----x:',x);
+                
+                parametros = { nombre: nombre.trim(), tipo: tipo.trim(), forma: forma.trim(), presentacion: presentacion.trim(), fecha_venc: x };
                 metodo = 'POST';
             }
             else {
-
-                let d = new Date(fecha_venc);
-                d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
-                //
-
-                console.log('adjusted d:', d)
+                
+                let d = new Date(fecha_venc);   
+                d.setMinutes(d.getMinutes() + d.getTimezoneOffset());               
+                                      
                 setFecha_venc(d);
                 let x = moment(fecha_venc).format('YYYY-MM-DD');
-                console.log('----x:', x);
-
-                parametros = { id: id, tipo: tipo.trim(), forma: forma.trim(), presentacion: presentacion.trim(), fecha_venc: x };
+              
+                parametros = { id: id, nombre: nombre.trim(), tipo: tipo.trim(), forma: forma.trim(), presentacion: presentacion.trim(), fecha_venc: x };
                 metodo = 'PUT';
             }
             enviarSolicitud(metodo, parametros);
         }
     }
     const enviarSolicitud = async (metodo, parametros) => {
-
+        
         console.log(parametros)
         await axios({ method: metodo, url: url, data: parametros }).then(function (respuesta) {
-
+            
             var status = respuesta.data[0];
             var msj = respuesta.data[1];
             show_alerta(msj, tipo);
@@ -159,11 +154,11 @@ export const Materiales = () => {
 
 
     return (
-        <Layout title="Gestion de Materiales">
-            {/* <div className={style.title}>Gestion de Materiales</div> */}
+        <Layout>
+            <div className={style.title}>Gestion de Materiales</div>
             <div className='container-fluid'>
                 <div className='row mt-4'>
-                    <div className='col-md-4 offset-md-8'>
+                    <div className='col-md-4 offset-md-9'>
                         <div className='d-grid mx-auto'>
                             <button onClick={() => openModal(1)} className='btn btn-lg btn-dark' data-bs-toggle='modal' data-bs-target='#modalProducts'>
                                 <i className='fa-solid fa-circle-plus'></i> Añadir nuevo Material
@@ -178,6 +173,7 @@ export const Materiales = () => {
                                 <thead>
                                     <tr>
                                         {/* <th>id</th> */}
+                                        <th>nombre</th>
                                         <th>TIPO</th>
                                         <th>FORMA</th>
                                         <th>PRESENTACION</th>
@@ -189,26 +185,28 @@ export const Materiales = () => {
                                     {materiales.map((material, i) => (
                                         <tr key={material.id}>
                                             {/* <td>{(i + 1)}</td> */}
+                                            <td>{material.nombre}</td>
                                             <td>{material.tipo}</td>
                                             <td>{material.forma}</td>
                                             <td>{material.presentacion}</td>
                                             <td>{material.fecha_venc}</td>
                                             <td>
-                                                <div className="btn-group" role="group">
+                                            <div className="btn-group" role="group">
 
-                                                    <button onClick={() => openModal(2,
-                                                        material.id,
-                                                        material.tipo,
-                                                        material.forma,
-                                                        material.presentacion,
-                                                        material.fecha_venc)}
-                                                        className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProducts'>
+                                            <button onClick={() => openModal(2,
+                                                material.id,
+                                                material.nombre,
+                                                material.tipo,
+                                                material.forma,
+                                                material.presentacion,
+                                                material.fecha_venc)}
+                                                className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProducts'>
                                                         <i className='fa-solid fa-edit'></i> Editar
                                                     </button>
                                                     <button onClick={() => deleteProduct(material.id)} className='btn btn-danger'>
-                                                        <i className='fa-solid fa-trash'></i>
-                                                    </button>
-                                                </div>
+                                                    <i className='fa-solid fa-trash'></i>
+                                                </button>
+                                            </div>
                                             </td>
                                         </tr>
                                     ))
@@ -228,29 +226,26 @@ export const Materiales = () => {
                         </div>
                         <div className='modal-body'>
                             <input type='hidden' id='id'></input>
+
                             <div className='input-group mb-3'>
+                                <span className='input-group-text'>nombre</span>
+                                <input type='text' id='nombre' className='form-control' placeholder='nombre' value={nombre}
+                                    onChange={(e) => setnombre(e.target.value)}></input>
+                            </div>
 
-                                <span className='input-group-text'>Tipo</span>
-
+                            <div className='input-group mb-3'>
+                                <span className='input-group-text'>Tipo</span>                      
                                 <select id='tipo' value={tipo}
-                                    onChange={(e) => {
-
-                                        console.log('e:', e)
-                                        console.log('e.target.value:', e.target.value)
-                                        setTipo(e.target.value)
-                                        console.log('tipo:', tipo)
-                                        //setTipo('coco')
-                                        //console.log('tipo:', tipo)
-
-
+                                    onChange={(e) =>{
+                                        setTipo(e.target.value)                             
                                     }
                                     }>
-                                    <option value="-">Seleccione</option>
+                                    <option value="">Seleccione</option>
                                     <option value="Medicamento">Medicamento</option>
                                     <option value="Insumo">Insumo</option>
                                 </select>
                             </div>
-
+                       
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Forma</span>
                                 <input type='text' id='forma' className='form-control' placeholder='Forma' value={forma}
@@ -263,10 +258,10 @@ export const Materiales = () => {
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Fecha Venc</span>
-                                <DatePicker
+                                <DatePicker                                                   
                                     dateFormat="yyyy-MM-dd"
-                                    selected={fecha_venc}
-                                    onChange={(date) => setFecha_venc(date)}
+                                    selected={fecha_venc}                                  
+                                    onChange={(date) => setFecha_venc(date)}                                  
                                 />
                             </div>
 

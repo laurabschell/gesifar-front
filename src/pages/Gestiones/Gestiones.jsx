@@ -15,9 +15,9 @@ export const Gestiones = () => {
           </div>
         </Link>
 
-        <Link className={style.box} to="/movimientos">
+        <Link className={style.box} to="/solicitudes">
           <div className={style.boxTitle}>
-            <h1>Gestion de Movimientos</h1>
+            <h1>Gestion de Solicitudes</h1>
           </div>
         </Link>
 
