@@ -17,10 +17,10 @@ export const Solicitudes = () => {
     const urlMateriales = 'http://gesifar-api.test/materialesController.php';
 
     const [solicitudes, setSolicitudes] = useState([]);
-    const [responsables, setResponsables] = useState('');
-    const [profesionales, setProfesionales] = useState('');
-    const [areas, setAreas] = useState('');
-    const [materiales, setMateriales] = useState('');
+    const [responsables, setResponsables] = useState([]);
+    const [profesionales, setProfesionales] = useState([]);
+    const [areas, setAreas] = useState([]);
+    const [materiales, setMateriales] = useState([]);
 
     const [id, setId] = useState('');
     const [responsable, setResponsable] = useState('');
@@ -34,20 +34,20 @@ export const Solicitudes = () => {
 
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
-    
+
     const [rows, initRow] = useState([]);
-  
+
     const addRowTable = () => {
-      
-      console.log("material:" , material)
-    
-      const data = {
-        material: material,
-        cantidad: cantidad,
-      };
-  
-      initRow([...rows, data]);
-  
+
+        console.log("material:", material)
+
+        const data = {
+            material: material,
+            cantidad: cantidad,
+        };
+
+        initRow([...rows, data]);
+
     };
 
     const tableRowRemove = (index) => {
@@ -88,7 +88,7 @@ export const Solicitudes = () => {
     const getProfesionales = async () => {
 
         const response = await axios.get(urlProfesionales);
-        
+
         const aProfesionales = response.data.map(p => ({
             "label": p.nombre + " " + p.apellido,
             "value": p.id
@@ -183,7 +183,7 @@ export const Solicitudes = () => {
         else {
             if (operation === 1) {
                 let x = moment(fecha).format('YYYY-MM-DD');
-                
+
                 parametros = { responsable: responsable, profesional: profesional, area: area, fecha: x, estado: estado, rows: rows };
                 metodo = 'POST';
             }
@@ -214,7 +214,7 @@ export const Solicitudes = () => {
 
     return (
         <Layout title="Gestion de Solicitudes">
-            
+
             <div className='container-fluid'>
                 <div className='row mt-4'>
                     <div className='col-md-4 offset-md-8'>
@@ -274,7 +274,7 @@ export const Solicitudes = () => {
 
                                 <span className='input-group-text'>Personal</span>
 
-                                <Select id='responsable' options={responsables} 
+                                <Select id='responsable' options={responsables}
                                     className={style.selectinput}
                                     value={responsables.find(item => item.label === responsable)}
 
@@ -290,7 +290,7 @@ export const Solicitudes = () => {
 
                             <div className='input-group mb-3' >
                                 <span className='input-group-text'>Profesional</span>
-                                <Select id='profesional' options={profesionales} 
+                                <Select id='profesional' options={profesionales}
                                     className={style.selectinput}
                                     value={profesionales.find(item => item.label === profesional)}
 
@@ -307,7 +307,7 @@ export const Solicitudes = () => {
 
                             <div className='input-group mb-3' >
                                 <span className='input-group-text'>Area</span>
-                                <Select id='area' options={areas} 
+                                <Select id='area' options={areas}
                                     className={style.selectinput}
                                     value={areas.find(item => item.label === area)}
 
@@ -351,29 +351,29 @@ export const Solicitudes = () => {
 
                             <div className='input-group mb-3' width="100%">
                                 <span className='input-group-text'>Nombre</span>
-                                <Select id='material' options={materiales} 
-                                className={style.selectinput30} 
-                                    
+                                <Select id='material' options={materiales}
+                                    className={style.selectinput30}
+
                                     onChange={(e) => {
                                         setMaterial(e.label)
                                     }}
 
                                 />
                                 <span className='input-group-text'>Cantidad</span>
-                                <input type='text' id='cantidad' 
-                                placeholder='cantidad' 
-                                className={style.selectinput30}
+                                <input type='text' id='cantidad'
+                                    placeholder='cantidad'
+                                    className={style.selectinput30}
 
                                     onChange={(e) => setCantidad(e.target.value)}>
-                                    
+
                                 </input>
-                                
-                                <Table m={{ material, cantidad }} 
-                                rows={rows}
-                                addRowTable={addRowTable}
-                                tableRowRemove={tableRowRemove}
+
+                                <Table m={{ material, cantidad }}
+                                    rows={rows}
+                                    addRowTable={addRowTable}
+                                    tableRowRemove={tableRowRemove}
                                 />
-                                                          
+
                             </div>
 
                             <div className='d-grid col-6 mx-auto'>
