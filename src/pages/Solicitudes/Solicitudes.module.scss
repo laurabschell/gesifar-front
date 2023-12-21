@@ -48,6 +48,17 @@
 .selectinput {
     width: 60%;
 }
+
 .selectinput30 {
     width: 30%;
+}
+
+.selectinput20 {
+    width: 20%;
+}
+
+input,
+select {
+    border: 1px solid rgba(0, 0, 0, 0.236);
+    border-radius: 2px;
 }

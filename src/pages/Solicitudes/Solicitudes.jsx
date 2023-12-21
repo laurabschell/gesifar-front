@@ -8,6 +8,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment-timezone';
 import Select from 'react-select'
 import Table from "../../components/table"
+import withReactContent from 'sweetalert2-react-content';
+import Swal from 'sweetalert2';
+import { Chip } from '@mui/material';
 
 export const Solicitudes = () => {
     const urlSolicitudes = 'http://gesifar-api.test/solicitudesController.php';
@@ -28,6 +31,7 @@ export const Solicitudes = () => {
     const [area, setArea] = useState('');
     const [fecha, setFecha] = useState(new Date());
     const [estado, setEstado] = useState('');
+    const [detalle, setDetalle] = useState([]);
 
     const [material, setMaterial] = useState('');
     const [cantidad, setCantidad] = useState('');
@@ -47,7 +51,8 @@ export const Solicitudes = () => {
         };
 
         initRow([...rows, data]);
-
+        // setDetalle([...rows, data]);
+        // console.log("detalle:", detalle);
     };
 
     const tableRowRemove = (index) => {
@@ -138,7 +143,7 @@ export const Solicitudes = () => {
         setMateriales(aMateriales2);
     }
 
-    const openModal = (op, id, responsable, profesional, area, fecha, estado) => {
+    const openModal = (op, id, responsable, profesional, area, fecha, estado, rows) => {
 
 
         setId('');
@@ -148,13 +153,22 @@ export const Solicitudes = () => {
         setFecha(null);
         setEstado('')
         setOperation(op);
-        /*responsable="Seleccione";
-        console.log(responsable);*/
 
         if (op === 1) {
             setFecha(new Date());
             initRow([]);
             setTitle('Registrar Solicitud');
+        } else if (op === 2) {
+            setTitle('Editar Datos');
+
+            setId(id);
+            setResponsable(responsable);
+            setProfesional(profesional);
+            setArea(area);
+            setFecha(null);
+            setEstado(estado);
+            rows = detalle;
+
         }
         window.setTimeout(function () {
             document.getElementById('responsable').focus();
@@ -192,7 +206,7 @@ export const Solicitudes = () => {
     }
 
     const enviarSolicitud = async (metodo, parametros) => {
-
+        console.log("detalle:", detalle);
         console.log(parametros)
         await axios({ method: metodo, url: urlSolicitudes, data: parametros }).then(function (respuesta) {
 
@@ -210,6 +224,23 @@ export const Solicitudes = () => {
                 console.log(error);
             });
     };
+
+    const deleteProduct = (id) => {
+        const MySwal = withReactContent(Swal);
+        MySwal.fire({
+            title: '¿Seguro de eliminar la solictud?',
+            icon: 'question', text: 'No se podrá dar marcha atrás',
+            showCancelButton: true, confirmButtonText: 'Si, eliminar', cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setId(id);
+                enviarSolicitud('DELETE', { id: id });
+            }
+            else {
+                show_alerta('Los datos de la solicitud NO fueron eliminados', 'info');
+            }
+        });
+    }
 
 
     return (
@@ -231,26 +262,38 @@ export const Solicitudes = () => {
                             <table className='table table-bordered'>
                                 <thead>
                                     <tr>
-                                        {/* <th>id</th> */}
-                                        <th>PERSONAL</th>
-                                        <th>PROFESIONAL</th>
-                                        <th>AREA</th>
-                                        <th>FECHA</th>
-                                        <th>ESTADO</th>
+                                        <th>Personal Responsable</th>
+                                        <th>Profesional Solicitante</th>
+                                        <th>Area</th>
+                                        <th>Fecha</th>
+                                        <th>Estado</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody className='table-group-divider'>
-                                    {solicitudes.map((solicitud, i) => (
+                                    {solicitudes.map((solicitud) => (
                                         <tr key={solicitud.id}>
                                             {/* <td>{(i + 1)}</td> */}
                                             <td>{solicitud.personal_resp}</td>
                                             <td>{solicitud.profesional_solicitante}</td>
                                             <td>{solicitud.area}</td>
                                             <td>{solicitud.fecha}</td>
-                                            <td>{solicitud.estado}</td>
                                             <td>
+                                                {solicitud.estado === "PENDIENTE" ?
+                                                    <Chip label={solicitud.estado} color="warning" /> :
+                                                    <Chip label={solicitud.estado} color="success" />}
+                                            </td>
+                                            <td>
+                                                <div className="btn-group" role="group">
 
+                                                    <button onClick={() => openModal(2, solicitud.id, solicitud.personal_resp, solicitud.profesional_solicitante, solicitud.area, solicitud.fecha, solicitud.estado, solicitud.detalle)}
+                                                        className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProducts'>
+                                                        <i className='fa-solid fa-edit'></i> Editar
+                                                    </button>
+                                                    <button onClick={() => deleteProduct(solicitud.id)} className='btn btn-danger'>
+                                                        <i className='fa-solid fa-trash'></i> Eliminar
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
@@ -262,75 +305,124 @@ export const Solicitudes = () => {
                 </div>
             </div>
             <div id='modalProducts' className='modal fade' aria-hidden='true'>
-                <div className='modal-dialog'>
+                <div className='modal-dialog modal-lg'>
                     <div className='modal-content'>
                         <div className='modal-header'>
                             <label className='h5'>{title}</label>
                             <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                         </div>
                         <div className='modal-body'>
-                            <input type='hidden' id='id'></input>
-                            <div className='input-group mb-3' >'
+                            <div class="row">
 
-                                <span className='input-group-text'>Personal</span>
+                                <div className="col">
 
-                                <Select id='responsable' options={responsables}
-                                    className={style.selectinput}
-                                    value={responsables.find(item => item.label === responsable)}
 
-                                    onChange={(e) => {
-                                        console.log(e);
-                                        console.log(e.label);
+                                    <input type='hidden' id='id'></input>
+                                    <div className='input-group mb-3' >'
 
-                                        setResponsable(e.label)
-                                    }}
+                                        <span className='input-group-text'>Personal Responsable</span>
 
-                                />
+                                        <Select id='responsable' options={responsables}
+                                            className={style.selectinput}
+                                            value={responsables.find(item => item.label === responsable)}
+
+                                            onChange={(e) => {
+                                                console.log(e);
+                                                console.log(e.label);
+
+                                                setResponsable(e.label)
+                                            }}
+
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col">
+                                    <div className='input-group mb-3' >
+                                        <span className='input-group-text'>Fecha</span>
+                                        <DatePicker
+                                            dateFormat="yyyy-MM-dd"
+                                            selected={fecha}
+                                            onChange={(date) => setFecha(date)}
+                                        />
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className='input-group mb-3' >
-                                <span className='input-group-text'>Profesional</span>
-                                <Select id='profesional' options={profesionales}
-                                    className={style.selectinput}
-                                    value={profesionales.find(item => item.label === profesional)}
+                            <div className="row" width="100%">
+                                <div className="col">
+                                    <div className='input-group mb-3 ' >
+                                        <span className='input-group-text'>Profesional Solicitante</span>
+                                        <Select id='profesional' options={profesionales}
+                                            className={style.selectinput}
+                                            value={profesionales.find(item => item.label === profesional)}
 
-                                    onChange={(e) => {
-                                        console.log(e);
-                                        console.log(e.label);
+                                            onChange={(e) => {
+                                                console.log(e);
+                                                console.log(e.label);
 
-                                        setProfesional(e.label)
-                                    }}
+                                                setProfesional(e.label)
+                                            }}
 
-                                />
+                                        />
+                                    </div>
+                                    <div class="w-100"></div>
+                                </div>
+                                <div className="col">
+                                    <div className='input-group mb-3' >
+                                        <span className='input-group-text'>Area</span>
+                                        <Select id='area' options={areas}
+                                            className={style.selectinput}
+                                            value={areas.find(item => item.label === area)}
+
+                                            onChange={(e) => {
+                                                console.log(e);
+                                                console.log(e.label);
+
+                                                setArea(e.label)
+                                            }}
+
+                                        />
+                                    </div>
+                                </div>
                             </div>
+
+
+
+
                             <div class="w-100"></div>
 
-                            <div className='input-group mb-3' >
-                                <span className='input-group-text'>Area</span>
-                                <Select id='area' options={areas}
-                                    className={style.selectinput}
-                                    value={areas.find(item => item.label === area)}
+
+                            <h5>Materiales Solicitados:</h5>
+
+                            <div className='input-group mb-3' width="100%">
+                                <span className='input-group-text'>Nombre del Material</span>
+                                <Select id='material' options={materiales}
+                                    className={style.selectinput30}
 
                                     onChange={(e) => {
-                                        console.log(e);
-                                        console.log(e.label);
-
-                                        setArea(e.label)
+                                        setMaterial(e.label)
                                     }}
 
                                 />
-                            </div>
+                                <span className='input-group-text'>Cantidad</span>
+                                <input type='text' id='cantidad'
+                                    placeholder='Cantidad'
+                                    className={style.selectinput20}
 
-                            <div className='input-group mb-3' >
-                                <span className='input-group-text'>Fecha</span>
-                                <DatePicker
-                                    dateFormat="yyyy-MM-dd"
-                                    selected={fecha}
-                                    onChange={(date) => setFecha(date)}
+                                    onChange={(e) => setCantidad(e.target.value)}>
+
+                                </input>
+                                <button className="btn btn-danger" onClick={addRowTable}>
+                                    Insertar
+                                </button>
+
+                                <Table m={{ material, cantidad }}
+                                    rows={rows}
+                                    addRowTable={addRowTable}
+                                    tableRowRemove={tableRowRemove}
                                 />
-                            </div>
-                            <div class="w-100"></div>
 
+                            </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Estado</span>
                                 <select id='estado' value={estado}
@@ -347,33 +439,6 @@ export const Solicitudes = () => {
                                     <option value="PENDIENTE">PENDIENTE</option>
                                     <option value="ENTREGADO">ENTREGADO</option>
                                 </select>
-                            </div>
-
-                            <div className='input-group mb-3' width="100%">
-                                <span className='input-group-text'>Nombre</span>
-                                <Select id='material' options={materiales}
-                                    className={style.selectinput30}
-
-                                    onChange={(e) => {
-                                        setMaterial(e.label)
-                                    }}
-
-                                />
-                                <span className='input-group-text'>Cantidad</span>
-                                <input type='text' id='cantidad'
-                                    placeholder='cantidad'
-                                    className={style.selectinput30}
-
-                                    onChange={(e) => setCantidad(e.target.value)}>
-
-                                </input>
-
-                                <Table m={{ material, cantidad }}
-                                    rows={rows}
-                                    addRowTable={addRowTable}
-                                    tableRowRemove={tableRowRemove}
-                                />
-
                             </div>
 
                             <div className='d-grid col-6 mx-auto'>

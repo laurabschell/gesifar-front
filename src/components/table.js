@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 function TableRows({ rows, tableRowRemove, onValUpdate }) {
   return rows.map((rowsData, index) => {
     const { material, cantidad } = rowsData;
@@ -48,25 +48,25 @@ function Table({ rows, addRowTable, tableRowRemove }) {
     <>
       
       <table className="table table-striped">
-        <thead>
+         {/* <thead>
           <tr>
             <th>Material</th>
             <th>Cantidad</th>
             
-            <th>
+            <th> 
               <button className="btn btn-danger" onClick={addRowTable}>
                 Insertar
               </button>
-            </th>
+             </th>
           </tr>
-        </thead>
+        </thead> */}
         <tbody>
           <TableRows
             rows={rows}
             tableRowRemove={tableRowRemove}
             
           />
-        </tbody>
+        </tbody> 
       </table>
     </>
   );
