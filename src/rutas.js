@@ -4,7 +4,7 @@ import Login from "./pages/Login/Login";
 import Gestiones from "./pages/Gestiones/Gestiones";
 import Movimientos from "./pages/Movimientos/Movimientos";
 import Profesionales from "./pages/Profesionales/Profesionales";
-import Personal from "./pages/Personal/Personal";
+import Responsables from "./pages/Responsables/Responsables";
 import Stock from "./pages/Stock/Stock";
 import OrdenCompra from "./pages/OrdenCompra/OrdenCompra";
 import RegistrarProfesional from "./pages/RegistrarProfesional/RegistrarProfesional";
@@ -18,7 +18,7 @@ function App() {
         <Route path="/gestiones" element={<Gestiones/>} />
         <Route path="/movimientos" element={<Movimientos />} />
         <Route path="/profesionales" element={<Profesionales />} />
-        <Route path="/personal" element={<Personal />} />
+        <Route path="/responsables" element={<Responsables />} />
         <Route path="/stock" element={<Stock />} />
         <Route path="/orden-compra" element={<OrdenCompra />} />
         <Route path="/registrar-profesional" element={<RegistrarProfesional/>} />

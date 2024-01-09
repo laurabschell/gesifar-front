@@ -1,94 +1,60 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout/Layout'
-import style from "./Profesionales.module.scss"
+import style from "./Responsables.module.scss"
 import axios from 'axios'
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { show_alerta } from '../../functions';
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-import Select from 'react-select'
 
-export const Profesionales = () => {
-    const url = 'http://gesifar-api.test/profesionalesController.php';
-    const urlProfesiones = 'http://gesifar-api.test/profesionesController.php';
-    const urlAreas = 'http://gesifar-api.test/areasController.php';
+export const Responsables = () => {
+    const url = 'http://gesifar-api.test/responsablesController.php';
     
-    const [professionals, setProfessionals] = useState([]);
-    const [profesiones, setProfesiones] = useState([]);
-    const [areas, setAreas] = useState([]);
+    const [responsables, setResponsables] = useState([]);
 
     const [id, setId] = useState('');
     const [dni, setDni] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
 
-    const [profesion, setProfesion] = useState('');
-    const [area, setArea] = useState('');
+    const [telefono, setTelefono] = useState('');
+    const [direccion, setDireccion] = useState('');
+    const [turno, setTurno] = useState('');
 
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
     const [searchDNI, setSearchDNI] = useState('');
     const [searchName, setSearchName] = useState('');
     const [searchLastname, setSearchLastname] = useState('');
-    const [searchArea, setSearchArea] = useState('');
-    const [searchProf, setSearchProf] = useState('');
+    const [searchTel, setSearchTel] = useState('');
+    const [searchDir, setSearchDir] = useState('');
 
     useEffect(() => {
-        getProfessionals();
-        getProfesiones();
-        getAreas();
+        //console.log('getResponsables()');
         
+        getResponsables();        
+        //console.log(responsables);
+
         
     }, []);
 
-    const getProfessionals = async () => {
+    const getResponsables = async () => {
         const respuesta = await axios.get(url);
-        setProfessionals(respuesta.data);
+        setResponsables(respuesta.data);   
     }
-    const getProfesiones  = async () => {   
-        const response = await axios.get(urlProfesiones);       
-
-        const aProfesiones = response.data.map(i => ({
-               "label": i.descripcion,
-               "value": i.id
-        }))
-        const aProfesiones2 = [
-            {
-                "label": "Seleccione",
-                "value": ""
-            },
-            ...aProfesiones];
-    
-        setProfesiones(aProfesiones2);
-    }
-    const getAreas  = async () => {
-       const response = await axios.get(urlAreas);
-        
-        const aAreas = response.data.map(i => ({
-               "label": i.descripcion,
-               "value": i.id
-        }))
-        const aAreas2 = [
-            {
-                "label": "Seleccione",
-                "value": ""
-            },
-            ...aAreas];
-    
-        setAreas(aAreas2);
-    }
-    const openModal = (op, id, dni, nombre, apellido, profesion, area) => {
+    const openModal = (op, id, dni, nombre, apellido, telefono, direccion, turno) => {
         
         setId('');
         setDni('');
         setNombre('');
         setApellido('');
-        setProfesion('Seleccione');
-        setArea('Seleccione');
+        setTelefono('');
+        setDireccion('');
+        setTurno('Seleccione');
         setOperation(op);
         if (op === 1) {
-            setTitle('Registrar Profesional');
+            setTitle('Registrar Responsable');
         }
         else if (op === 2) {
             setTitle('Editar Datos');
@@ -97,8 +63,9 @@ export const Profesionales = () => {
             setDni(dni);
             setNombre(nombre);
             setApellido(apellido);
-            setProfesion(profesion);
-            setArea(area);
+            setTelefono(telefono);
+            setDireccion(direccion);            
+            setTurno(turno);
 
         }
         window.setTimeout(function () {
@@ -109,21 +76,21 @@ export const Profesionales = () => {
         var parametros;
         var metodo;
         if (dni.trim() === '') {
-            show_alerta('Escribe el DNI del profesional', 'warning');
+            show_alerta('Escribe el DNI del responsable', 'warning');
         }
         else if (nombre.trim() === '') {
-            show_alerta('Escribe el nombre del profesional', 'warning');
+            show_alerta('Escribe el nombre del responsable', 'warning');
         }
         else if (apellido.trim() === '') {
-            show_alerta('Escribe el apellido del profesional', 'warning');
+            show_alerta('Escribe el apellido del responsable', 'warning');
         }
         else {
             if (operation === 1) {
-                parametros = { dni: dni.trim(), nombre: nombre.trim(), apellido: apellido.trim() , profesion, area};
+                parametros = { dni: dni.trim(), nombre: nombre.trim(), apellido: apellido.trim(), telefono:telefono.trim(), direccion:direccion.trim(), turno:turno};
                 metodo = 'POST';
             }
             else {
-                parametros = { id: id, dni: dni.trim(), nombre: nombre.trim(), apellido: apellido.trim(), profesion, area };
+                parametros = { id: id, dni: dni.trim(), nombre: nombre.trim(), apellido: apellido.trim(),telefono: telefono.trim(), direccion:direccion.trim(), turno:turno };
                 metodo = 'PUT';
             }
             enviarSolicitud(metodo, parametros);
@@ -136,7 +103,7 @@ export const Profesionales = () => {
             show_alerta(msj, tipo);
             if (tipo === 'success') {
                 document.getElementById('btnCerrar').click();
-                getProfessionals();
+                getResponsables();
             }
         })
             .catch(function (error) {
@@ -169,17 +136,17 @@ export const Profesionales = () => {
             html: ".table-to-print",
         });
 
-        doc.save("profesionales-registrados-GESIFAR.pdf");
+        doc.save("responsables-registrados-GESIFAR.pdf");
     };
 
     return (
-        <Layout title="Gestion de Profesionales Solicitantes">
+        <Layout title="Gestion de Responsables Solicitantes">
             <div className='container-fluid'>
                 <div className=' mt-4'>
                     <div class="input-group" className='col-md-4 offset-8'>
                         <div className='d-grid mx-auto'>
                             <button onClick={() => openModal(1)} className='btn btn-lg btn-dark' data-bs-toggle='modal' data-bs-target='#modalProducts'>
-                                <i className='fa-solid fa-circle-plus'></i> Añadir nuevo profesional
+                                <i className='fa-solid fa-circle-plus'></i> Añadir nuevo responsable
                             </button>
                         </div>
                     </div>
@@ -200,12 +167,12 @@ export const Profesionales = () => {
                                 <label class="form-label" for="form1">Consulta por Apellido</label>
                             </div>
                             <div class="form-outline" className=' col-md-2' data-mdb-input-init>
-                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchProf(e.target.value)} />
-                                <label class="form-label" for="form1">Consulta por Profesion</label>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchTel(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Telefono</label>
                             </div>
                             <div class="form-outline" className=' col-md-2' data-mdb-input-init>
-                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchArea(e.target.value)} />
-                                <label class="form-label" for="form1">Consulta por Area</label>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchDir(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Direccion</label>
                             </div>
                         </div>
                     </div>
@@ -219,14 +186,15 @@ export const Profesionales = () => {
                                         <th>DNI</th>
                                         <th>NOMBRE</th>
                                         <th>APELLIDO</th>
-                                        <th>PROFESION</th>
-                                        <th>AREA</th>
+                                        <th>TELEFONO</th>
+                                        <th>DIRECCION</th>
+                                        <th>TURNO</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody className='table-group-divider'>
-                                    {professionals.filter((item) =>
-                                        item.dni.includes(searchDNI) && item.nombre.toLowerCase().includes(searchName) && item.apellido.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea)
+                                    {responsables.filter((item) =>
+                                        item.dni.includes(searchDNI) && item.nombre.toLowerCase().includes(searchName) && item.apellido.toLowerCase().includes(searchLastname) && item.telefono.toLowerCase().includes(searchTel) && item.direccion.toLowerCase().includes(searchDir)
                                     ).map((item) => (
                                         <tr key={item.id}>
                                             <td>{item.dni}</td>
@@ -282,31 +250,30 @@ export const Profesionales = () => {
                                     onChange={(e) => setApellido(e.target.value)}></input>
                             </div>
                             <div className='input-group mb-3'>
-                                <span className='input-group-text'>Profesion</span>
-                                <Select id='profesion' options={profesiones}
-                                    className={style.selectinput}
-                                    value={profesiones.find(item => item.label === profesion)}
-
-                                    onChange={(e) => {
-                                        console.log(e);
-                                        console.log(e.label);
-                                        setProfesion(e.label)
-                                    }}
-                                />
+                                <span className='input-group-text'>Telefono</span>
+                                <input type='text' id='telefono' className='form-control' placeholder='Telefono' value={telefono}
+                                    onChange={(e) => setTelefono(e.target.value)}></input>
           
                             </div>
                             <div className='input-group mb-3'>
-                                <span className='input-group-text'>Area</span>
-                                <Select id='area' options={areas}                                
-                                    value={areas.find(item => item.label === area)}
-
-                                    onChange={(e) => {
-                                        console.log(e);
-                                        console.log(e.label);
-                                        setArea(e.label)
-                                    }}
-                            />
+                                <span className='input-group-text'>Direccion</span>
+                                <input type='text' id='direccion' className='form-control' placeholder='Direccion' value={direccion}
+                                    onChange={(e) => setDireccion(e.target.value)}></input>
+                                
                             </div>
+                            <div className='input-group mb-3'>
+                                <span className='input-group-text'>Turno</span>                      
+                                <select id='turno' value={turno}
+                                    onChange={(e) =>{
+                                        setTurno(e.target.value)                             
+                                    }
+                                    }>
+                                    <option value="">Seleccione</option>
+                                    <option value="Mañana">Mañana</option>
+                                    <option value="Tarde">Tarde</option>
+                                </select>
+                            </div>
+
                             <div className='d-grid col-6 mx-auto'>
                                 <button onClick={() => validar()} className='btn btn-success'>
                                     <i className='fa-solid fa-floppy-disk'></i> Guardar
@@ -323,4 +290,4 @@ export const Profesionales = () => {
     )
 }
 
-export default Profesionales
+export default Responsables

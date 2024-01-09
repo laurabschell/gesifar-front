@@ -4,7 +4,7 @@ import { Login } from "./pages/Login/Login";
 import { Gestiones } from "./pages/Gestiones/Gestiones";
 import { Solicitudes } from "./pages/Solicitudes/Solicitudes";
 import { Profesionales } from "./pages/Profesionales/Profesionales";
-import { Personal } from "./pages/Personal/Personal";
+import { Responsables } from "./pages/Responsables/Responsables";
 //import { Stock } from "./pages/Stock/Stock";
 import { Materiales } from "./pages/Materiales/Materiales";
 
@@ -30,7 +30,7 @@ function App() {
           <Route path="/solicitudes" element={<Solicitudes />} />
           <Route path="/profesionales" element={<Profesionales />} />
           <Route path="/materiales" element={<Materiales />} />
-          <Route path="/personal" element={<Personal />} />
+          <Route path="/responsables" element={<Responsables />} />
           <Route path="/ordencompra" element={<OrdenCompra />} />
           <Route path="/estadisticas" element={<Estadisticas />} />
         </Route>
