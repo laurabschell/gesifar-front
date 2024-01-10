@@ -14,7 +14,7 @@ export const Materiales = () => {
     const url = 'http://gesifar-api.test/materialesController.php';
     const [materiales, setMateriales] = useState([]);
     const [id, setId] = useState('');
-    const [nombre, setnombre] = useState('');
+    const [nombre, setNombre] = useState('');
     const [tipo, setTipo] = useState('');
     const [forma, setForma] = useState('');
     const [presentacion, setPresentacion] = useState('');
@@ -37,7 +37,7 @@ export const Materiales = () => {
         console.log('openmodal:',op);
 
         setId('');
-        setnombre('');
+        setNombre('');
         setTipo('');
         setForma('');
         setPresentacion('');
@@ -62,7 +62,7 @@ export const Materiales = () => {
          
             setTitle('Editar Datos');
             setId(id);
-            setnombre(nombre);
+            setNombre(nombre);
             setTipo(tipo);
             setForma(forma);
             setPresentacion(presentacion);
@@ -230,7 +230,7 @@ export const Materiales = () => {
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>nombre</span>
                                 <input type='text' id='nombre' className='form-control' placeholder='nombre' value={nombre}
-                                    onChange={(e) => setnombre(e.target.value)}></input>
+                                    onChange={(e) => setNombre(e.target.value)}></input>
                             </div>
 
                             <div className='input-group mb-3'>
