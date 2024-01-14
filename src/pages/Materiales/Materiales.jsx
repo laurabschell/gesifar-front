@@ -32,9 +32,6 @@ export const Materiales = () => {
         setMateriales(respuesta.data);
     }
     const openModal = (op, id, nombre, tipo, forma, presentacion, fecha_venc) => {
-       
-
-        console.log('openmodal:',op);
 
         setId('');
         setNombre('');
@@ -66,8 +63,6 @@ export const Materiales = () => {
             setTipo(tipo);
             setForma(forma);
             setPresentacion(presentacion);
-            
-            console.log('**tipo:', tipo)
 
             let d = new Date(fecha_venc);
             d.setMinutes(d.getMinutes() + d.getTimezoneOffset());          

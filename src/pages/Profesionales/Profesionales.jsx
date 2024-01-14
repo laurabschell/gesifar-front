@@ -232,13 +232,12 @@ export const Profesionales = () => {
                                             <td>{item.dni}</td>
                                             <td>{item.nombre}</td>
                                             <td>{item.apellido}</td>
-                                            <td>{item.telefono}</td>
-                                            <td>{item.direccion}</td>
-                                            <td>{item.turno}</td>
+                                            <td>{item.profesion}</td>
+                                            <td>{item.area}</td>
                                             <td>
                                                 <div className="btn-group" role="group">
 
-                                                    <button onClick={() => openModal(2, item.id, item.dni, item.nombre, item.apellido, item.telefono, item.direccion, item.turno)}
+                                                    <button onClick={() => openModal(2, item.id, item.dni, item.nombre, item.apellido, item.profesion, item.area)}
                                                         className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProducts'>
                                                         <i className='fa-solid fa-edit'></i> Editar
                                                     </button>
