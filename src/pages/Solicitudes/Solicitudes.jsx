@@ -18,6 +18,7 @@ export const Solicitudes = () => {
     const urlProfesionales = 'http://gesifar-api.test/profesionalesController.php';
     const urlAreas = 'http://gesifar-api.test/areasController.php';
     const urlMateriales = 'http://gesifar-api.test/materialesController.php';
+    const urlItems = 'http://gesifar-api.test/solicitudItemsController.php';
 
     const [solicitudes, setSolicitudes] = useState([]);
     const [responsables, setResponsables] = useState([]);
@@ -31,7 +32,6 @@ export const Solicitudes = () => {
     const [area, setArea] = useState('');
     const [fecha, setFecha] = useState(new Date());
     const [estado, setEstado] = useState('');
-    const [detalle, setDetalle] = useState([]);
 
     const [material, setMaterial] = useState('');
     const [cantidad, setCantidad] = useState('');
@@ -143,8 +143,20 @@ export const Solicitudes = () => {
         setMateriales(aMateriales2);
     }
 
-    const openModal = (op, id, responsable, profesional, area, fecha, estado, rows) => {
+    const getItems = async (id) => {
+        const respuesta = await axios.get(urlItems + '?id_solicitud='+id);
+        initRow(respuesta.data);
+        //setMaterial('Seleccione');
+        //setCantidad('0');
 
+        //document.getElementById('cantidad').text = '';
+        //console.log(document.getElementById('cantidad'));
+        //console.log(document.getElementById('cantidad').text);
+        
+
+    }
+
+    const openModal = (op, id, responsable, profesional, area, fecha, estado, rows) => {
 
         setId('');
         setResponsable('Seleccione');
@@ -154,21 +166,31 @@ export const Solicitudes = () => {
         setEstado('')
         setOperation(op);
 
+        setMaterial('Seleccione');
+        setCantidad('0');
+
+        //console.log('cantidad', cantidad);
+        //console.log(document.getElementById('cantidad').text);
+
         if (op === 1) {
+            setTitle('Registrar Solicitud');
             setFecha(new Date());
             initRow([]);
-            setTitle('Registrar Solicitud');
+            
         } else if (op === 2) {
-            setTitle('Editar Datos');
-
+            setTitle('Editar Datos - Solicitud ' + id.toString());
             setId(id);
             setResponsable(responsable);
             setProfesional(profesional);
             setArea(area);
-            setFecha(null);
+            //setFecha(fecha);
+            let d = new Date(fecha);
+            d.setMinutes(d.getMinutes() + d.getTimezoneOffset());          
+            setFecha(d);              
             setEstado(estado);
-            rows = detalle;
-
+            //set rows
+            getItems(id); 
+ 
         }
         window.setTimeout(function () {
             document.getElementById('responsable').focus();
@@ -195,18 +217,29 @@ export const Solicitudes = () => {
             show_alerta('Añada un material', 'warning');
         }
         else {
+            let x = moment(fecha).format('YYYY-MM-DD');
             if (operation === 1) {
-                let x = moment(fecha).format('YYYY-MM-DD');
-
-                parametros = { responsable: responsable, profesional: profesional, area: area, fecha: x, estado: estado, rows: rows };
+                
+                parametros = {
+                    responsable: responsable,
+                    profesional: profesional, area: area, fecha: x, estado: estado, rows: rows
+                };
                 metodo = 'POST';
             }
+            else {
+                parametros = {
+                    id: id, responsable: responsable,
+                    profesional: profesional, area: area, fecha: x, estado: estado,rows: rows
+                };
+                metodo = 'PUT';
+            }
+            console.log('parametros:',parametros)
             enviarSolicitud(metodo, parametros);
         }
     }
 
     const enviarSolicitud = async (metodo, parametros) => {
-        console.log("detalle:", detalle);
+        //console.log("detalle:", detalle);
         console.log(parametros)
         await axios({ method: metodo, url: urlSolicitudes, data: parametros }).then(function (respuesta) {
 
@@ -386,29 +419,26 @@ export const Solicitudes = () => {
                                 </div>
                             </div>
 
-
-
-
                             <div class="w-100"></div>
 
-
                             <h5>Materiales Solicitados:</h5>
-
                             <div className='input-group mb-3' width="100%">
                                 <span className='input-group-text'>Nombre del Material</span>
-                                <Select id='material' options={materiales}
+                                <Select id='material' 
+                                    
+                                    options={materiales}
                                     className={style.selectinput30}
 
                                     onChange={(e) => {
                                         setMaterial(e.label)
                                     }}
-
                                 />
                                 <span className='input-group-text'>Cantidad</span>
                                 <input type='text' id='cantidad'
                                     placeholder='Cantidad'
                                     className={style.selectinput20}
-
+                                    text={cantidad}
+                                    value={cantidad}
                                     onChange={(e) => setCantidad(e.target.value)}>
 
                                 </input>
