@@ -146,13 +146,6 @@ export const Solicitudes = () => {
     const getItems = async (id) => {
         const respuesta = await axios.get(urlItems + '?id_solicitud='+id);
         initRow(respuesta.data);
-        //setMaterial('Seleccione');
-        //setCantidad('0');
-
-        //document.getElementById('cantidad').text = '';
-        //console.log(document.getElementById('cantidad'));
-        //console.log(document.getElementById('cantidad').text);
-        
 
     }
 
@@ -164,13 +157,9 @@ export const Solicitudes = () => {
         setArea('Seleccione');
         setFecha(null);
         setEstado('')
-        setOperation(op);
-
         setMaterial('Seleccione');
         setCantidad('0');
-
-        //console.log('cantidad', cantidad);
-        //console.log(document.getElementById('cantidad').text);
+        setOperation(op);
 
         if (op === 1) {
             setTitle('Registrar Solicitud');
@@ -428,6 +417,8 @@ export const Solicitudes = () => {
                                     
                                     options={materiales}
                                     className={style.selectinput30}
+
+                                    value={materiales.find(item => item.label === material)}
 
                                     onChange={(e) => {
                                         setMaterial(e.label)
