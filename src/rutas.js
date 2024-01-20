@@ -6,7 +6,7 @@ import Movimientos from "./pages/Movimientos/Movimientos";
 import Profesionales from "./pages/Profesionales/Profesionales";
 import Responsables from "./pages/Responsables/Responsables";
 import Stock from "./pages/Stock/Stock";
-import OrdenCompra from "./pages/OrdenCompra/OrdenCompra";
+import Ordenes from "./pages/Ordenes/Ordenes";
 import RegistrarProfesional from "./pages/RegistrarProfesional/RegistrarProfesional";
 
 function App() {
@@ -20,7 +20,7 @@ function App() {
         <Route path="/profesionales" element={<Profesionales />} />
         <Route path="/responsables" element={<Responsables />} />
         <Route path="/stock" element={<Stock />} />
-        <Route path="/orden-compra" element={<OrdenCompra />} />
+        <Route path="/ordenes" element={<Ordenes />} />
         <Route path="/registrar-profesional" element={<RegistrarProfesional/>} />
       </Routes>
     </BrowserRouter>

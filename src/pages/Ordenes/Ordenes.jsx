@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout/Layout'
-import style from "./Solicitudes.module.scss"
+import style from "./Ordenes.module.scss"
 import axios from 'axios'
 import { show_alerta } from '../../functions';
 import DatePicker from "react-datepicker";
@@ -12,24 +12,21 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import { Chip } from '@mui/material';
 
-export const Solicitudes = () => {
-    const urlSolicitudes = 'http://gesifar-api.test/solicitudesController.php';
+export const Ordenes = () => {
+    const urlOrdenes = 'http://gesifar-api.test/ordenesController.php';
     const urlResponsables = 'http://gesifar-api.test/responsablesController.php';
-    const urlProfesionales = 'http://gesifar-api.test/profesionalesController.php';
-    const urlAreas = 'http://gesifar-api.test/areasController.php';
+    const urlProveedores = 'http://gesifar-api.test/proveedoresController.php';
     const urlMateriales = 'http://gesifar-api.test/materialesController.php';
-    const urlItems = 'http://gesifar-api.test/solicitudItemsController.php';
+    const urlItems = 'http://gesifar-api.test/ordenItemsController.php';
 
-    const [solicitudes, setSolicitudes] = useState([]);
+    const [ordenes, setOrdenes] = useState([]);
     const [responsables, setResponsables] = useState([]);
-    const [profesionales, setProfesionales] = useState([]);
-    const [areas, setAreas] = useState([]);
+    const [proveedores, setProveedores] = useState([]);
     const [materiales, setMateriales] = useState([]);
 
     const [id, setId] = useState('');
     const [responsable, setResponsable] = useState('');
-    const [profesional, setProfesional] = useState('');
-    const [area, setArea] = useState('');
+    const [proveedor, setProveedor] = useState('');
     const [fecha, setFecha] = useState(new Date());
     const [estado, setEstado] = useState('');
 
@@ -71,16 +68,15 @@ export const Solicitudes = () => {
     };
 
     useEffect(() => {
-        getSolicitudes();
+        getOrdenes();
         getResponsables();
-        getProfesionales();
-        getAreas();
+        getProveedores();
         getMateriales();
     }, []);
 
-    const getSolicitudes = async () => {
-        const respuesta = await axios.get(urlSolicitudes);
-        setSolicitudes(respuesta.data);
+    const getOrdenes = async () => {
+        const respuesta = await axios.get(urlOrdenes);
+        setOrdenes(respuesta.data);
     }
     const getResponsables = async () => {
 
@@ -99,42 +95,24 @@ export const Solicitudes = () => {
         setResponsables(aResponsables2);
 
     }
-    const getProfesionales = async () => {
+    const getProveedores = async () => {
 
-        const response = await axios.get(urlProfesionales);
+        const response = await axios.get(urlProveedores);
 
-        const aProfesionales = response.data.map(p => ({
-            "label": p.nombre + " " + p.apellido,
+        const aProveedores = response.data.map(p => ({
+            "label": p.razon_social,
             "value": p.id
         }))
-        const aProfesionales2 = [
+        const aProveedores2 = [
             {
                 "label": "Seleccione",
                 "value": ""
             },
-            ...aProfesionales];
+            ...aProveedores];
 
-        setProfesionales(aProfesionales2);
+        setProveedores(aProveedores2);
 
     }
-
-    const getAreas = async () => {
-        const response = await axios.get(urlAreas);
-
-        const aAreas = response.data.map(a => ({
-            "label": a.descripcion,
-            "value": a.id
-        }))
-        const aAreas2 = [
-            {
-                "label": "Seleccione",
-                "value": ""
-            },
-            ...aAreas];
-
-        setAreas(aAreas2);
-    }
-
     const getMateriales = async () => {
         const response = await axios.get(urlMateriales);
 
@@ -153,17 +131,16 @@ export const Solicitudes = () => {
     }
 
     const getItems = async (id) => {
-        const respuesta = await axios.get(urlItems + '?id_solicitud='+id);
+        const respuesta = await axios.get(urlItems + '?id_orden='+id);
         initRow(respuesta.data);
 
     }
 
-    const openModal = (op, id, responsable, profesional, area, fecha, estado, rows) => {
+    const openModal = (op, id, responsable, proveedor, fecha, estado, rows) => {
 
         setId('');
         setResponsable('Seleccione');
-        setProfesional('Seleccione');
-        setArea('Seleccione');
+        setProveedor('Seleccione');
         setFecha(null);
         setEstado('')
         setMaterial('Seleccione');
@@ -171,17 +148,16 @@ export const Solicitudes = () => {
         setOperation(op);
 
         if (op === 1) {
-            setTitle('Registrar Solicitud');
+            setTitle('Registrar Orden');
             setFecha(new Date());
             initRow([]);
             
         } else if (op === 2) {
-            setTitle('Editar Datos - Solicitud ' + id.toString());
+            setTitle('Editar Datos - Orden ' + id.toString());
             setId(id);
             setResponsable(responsable);
-            setProfesional(profesional);
-            setArea(area);
-            //setFecha(fecha);
+            setProveedor(proveedor);
+
             let d = new Date(fecha);
             d.setMinutes(d.getMinutes() + d.getTimezoneOffset());          
             setFecha(d);              
@@ -198,15 +174,12 @@ export const Solicitudes = () => {
     const validar = () => {
         var parametros;
         var metodo;
-
+        
         if (responsable === 'Seleccione') {
             show_alerta('Indique el Responsable', 'warning');
         }
-        else if (profesional === 'Seleccione') {
-            show_alerta('Indique el Profesional', 'warning');
-        }
-        else if (area === 'Seleccione') {
-            show_alerta('Indique el Area', 'warning');
+        else if (proveedor === 'Seleccione') {
+            show_alerta('Indique el Proveedor', 'warning');
         }
         else if (estado.trim() === '') {
             show_alerta('Indique el Estado', 'warning');
@@ -220,14 +193,17 @@ export const Solicitudes = () => {
                 
                 parametros = {
                     responsable: responsable,
-                    profesional: profesional, area: area, fecha: x, estado: estado, rows: rows
+                    proveedor: proveedor,
+                    fecha: x, estado: estado, rows: rows
                 };
                 metodo = 'POST';
             }
             else {
                 parametros = {
-                    id: id, responsable: responsable,
-                    profesional: profesional, area: area, fecha: x, estado: estado,rows: rows
+                    id: id,
+                    responsable: responsable,
+                    proveedor: proveedor,
+                    fecha: x, estado: estado, rows: rows
                 };
                 metodo = 'PUT';
             }
@@ -237,8 +213,8 @@ export const Solicitudes = () => {
     }
 
     const enviarSolicitud = async (metodo, parametros) => {
-        
-        await axios({ method: metodo, url: urlSolicitudes, data: parametros }).then(function (respuesta) {
+   
+        await axios({ method: metodo, url: urlOrdenes, data: parametros }).then(function (respuesta) {
 
             var tipo = respuesta.data[0];
             var msj = respuesta.data[1];
@@ -246,7 +222,7 @@ export const Solicitudes = () => {
 
             if (tipo === 'success') {
                 document.getElementById('btnCerrar').click();
-                getSolicitudes();
+                getOrdenes();
             }
         })
             .catch(function (error) {
@@ -258,7 +234,7 @@ export const Solicitudes = () => {
     const deleteProduct = (id) => {
         const MySwal = withReactContent(Swal);
         MySwal.fire({
-            title: '¿Seguro de eliminar la solictud?',
+            title: '¿Seguro de eliminar la orden?',
             icon: 'question', text: 'No se podrá dar marcha atrás',
             showCancelButton: true, confirmButtonText: 'Si, eliminar', cancelButtonText: 'Cancelar'
         }).then((result) => {
@@ -267,21 +243,20 @@ export const Solicitudes = () => {
                 enviarSolicitud('DELETE', { id: id });
             }
             else {
-                show_alerta('Los datos de la solicitud NO fueron eliminados', 'info');
+                show_alerta('Los datos de la orden NO fueron eliminados', 'info');
             }
         });
     }
 
-
     return (
-        <Layout title="Gestion de Solicitudes">
+        <Layout title="Gestion de Ordenes de Compra">
 
             <div className='container-fluid'>
                 <div className='row mt-4'>
                     <div className='col-md-4 offset-md-8'>
                         <div className='d-grid mx-auto'>
                             <button onClick={() => openModal(1)} className='btn btn-lg btn-dark' data-bs-toggle='modal' data-bs-target='#modalProducts'>
-                                <i className='fa-solid fa-circle-plus'></i> Añadir nueva Solicitud
+                                <i className='fa-solid fa-circle-plus'></i> Añadir nueva Orden
                             </button>
                         </div>
                     </div>
@@ -293,34 +268,32 @@ export const Solicitudes = () => {
                                 <thead>
                                     <tr>
                                         <th>Personal Responsable</th>
-                                        <th>Profesional Solicitante</th>
-                                        <th>Area</th>
+                                        <th>Proveedor</th>
                                         <th>Fecha</th>
                                         <th>Estado</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody className='table-group-divider'>
-                                    {solicitudes.map((solicitud) => (
-                                        <tr key={solicitud.id}>
-                                            {/* <td>{(i + 1)}</td> */}
-                                            <td>{solicitud.personal_resp}</td>
-                                            <td>{solicitud.profesional_solicitante}</td>
-                                            <td>{solicitud.area}</td>
-                                            <td>{solicitud.fecha}</td>
+                                    {ordenes.map((orden) => (
+                                        <tr key={orden.id}>
+                                            {/* <td>{(i + 1)}</td> */}                                            
+                                            <td>{orden.personal_resp}</td>
+                                            <td>{orden.proveedor}</td>
+                                            <td>{orden.fecha}</td>                                            
                                             <td>
-                                                {solicitud.estado === "PENDIENTE" ?
-                                                    <Chip label={solicitud.estado} color="warning" /> :
-                                                    <Chip label={solicitud.estado} color="success" />}
+                                                {orden.estado === "PENDIENTE" ?
+                                                    <Chip label={orden.estado} color="warning" /> :
+                                                    <Chip label={orden.estado} color="success" />}
                                             </td>
                                             <td>
                                                 <div className="btn-group" role="group">
 
-                                                    <button onClick={() => openModal(2, solicitud.id, solicitud.personal_resp, solicitud.profesional_solicitante, solicitud.area, solicitud.fecha, solicitud.estado, solicitud.detalle)}
+                                                    <button onClick={() => openModal(2, orden.id, orden.personal_resp, orden.proveedor, orden.fecha, orden.estado, orden.detalle)}
                                                         className='btn btn-warning' data-bs-toggle='modal' data-bs-target='#modalProducts'>
                                                         <i className='fa-solid fa-edit'></i> Editar
                                                     </button>
-                                                    <button onClick={() => deleteProduct(solicitud.id)} className='btn btn-danger'>
+                                                    <button onClick={() => deleteProduct(orden.id)} className='btn btn-danger'>
                                                         <i className='fa-solid fa-trash'></i> Eliminar
                                                     </button>
                                                 </div>
@@ -345,8 +318,6 @@ export const Solicitudes = () => {
                             <div class="row">
 
                                 <div className="col">
-
-
                                     <input type='hidden' id='id'></input>
                                     <div className='input-group mb-3' >'
 
@@ -381,16 +352,16 @@ export const Solicitudes = () => {
                             <div className="row" width="100%">
                                 <div className="col">
                                     <div className='input-group mb-3 ' >
-                                        <span className='input-group-text'>Profesional Solicitante</span>
-                                        <Select id='profesional' options={profesionales}
+                                        <span className='input-group-text'>Proveedor</span>
+                                        <Select id='proveedor' options={proveedores}
                                             className={style.selectinput}
-                                            value={profesionales.find(item => item.label === profesional)}
+                                            value={proveedores.find(item => item.label === proveedor)}
 
                                             onChange={(e) => {
                                                 console.log(e);
                                                 console.log(e.label);
 
-                                                setProfesional(e.label)
+                                                setProveedor(e.label)
                                             }}
 
                                         />
@@ -398,21 +369,7 @@ export const Solicitudes = () => {
                                     <div class="w-100"></div>
                                 </div>
                                 <div className="col">
-                                    <div className='input-group mb-3' >
-                                        <span className='input-group-text'>Area</span>
-                                        <Select id='area' options={areas}
-                                            className={style.selectinput}
-                                            value={areas.find(item => item.label === area)}
-
-                                            onChange={(e) => {
-                                                console.log(e);
-                                                console.log(e.label);
-
-                                                setArea(e.label)
-                                            }}
-
-                                        />
-                                    </div>
+                                   
                                 </div>
                             </div>
 
@@ -466,7 +423,7 @@ export const Solicitudes = () => {
                                     }>
                                     <option value="-">Seleccione</option>
                                     <option value="PENDIENTE">PENDIENTE</option>
-                                    <option value="ENTREGADO">ENTREGADO</option>
+                                    <option value="ENVIADA">ENTREGADA</option>
                                 </select>
                             </div>
 
@@ -486,4 +443,4 @@ export const Solicitudes = () => {
     )
 }
 
-export default Solicitudes
+export default Ordenes
