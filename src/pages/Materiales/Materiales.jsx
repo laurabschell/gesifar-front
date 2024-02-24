@@ -22,6 +22,12 @@ export const Materiales = () => {
 
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
+    
+    const [searchNombre, setSearchNombre] = useState('');
+    const [searchTipo, setSearchTipo] = useState('');
+    const [searchForma, setSearchForma] = useState('');
+    const [searchPres, setSearchPres] = useState('');
+    const [searchFecha, setSearchFecha] = useState('');
 
     useEffect(() => {
         getProducts();
@@ -160,6 +166,35 @@ export const Materiales = () => {
                             </button>
                         </div>
                     </div>
+
+                    <div class="input-group" className='col-md-12'>
+                        <h5>Consultar por campo:</h5>
+                        <div class="row">
+
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchNombre(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Nombre</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchTipo(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Tipo</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchForma(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Forma</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchPres(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Presentacion</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchFecha(e.target.value)} />
+                                <label class="form-label" for="form1">Consulta por Fecha</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+
                 </div>
                 <div className='row mt-4'>
                     <div className='col-12 col-lg-12 offset-0'>
@@ -168,18 +203,19 @@ export const Materiales = () => {
                                 <thead>
                                     <tr>
                                         {/* <th>id</th> */}
-                                        <th>nombre</th>
-                                        <th>TIPO</th>
-                                        <th>FORMA</th>
-                                        <th>PRESENTACION</th>
-                                        <th>FECHA VENC</th>
+                                        <th>Nombre</th>
+                                        <th>Tipo</th>
+                                        <th>Forma</th>
+                                        <th>Presentacion</th>
+                                        <th>Fecha Venc</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody className='table-group-divider'>
-                                    {materiales.map((material, i) => (
+                                    {materiales.filter((materiales) =>
+                                        materiales.nombre.toLowerCase().includes(searchNombre.toLowerCase()) && materiales.tipo.toLowerCase().includes(searchTipo.toLowerCase()) && materiales.forma.toLowerCase().includes(searchForma.toLowerCase()) && materiales.presentacion.toLowerCase().includes(searchPres.toLowerCase()) && materiales.fecha_venc.toLowerCase().includes(searchFecha)
+                                    ).map((material, i) => (
                                         <tr key={material.id}>
-                                            {/* <td>{(i + 1)}</td> */}
                                             <td>{material.nombre}</td>
                                             <td>{material.tipo}</td>
                                             <td>{material.forma}</td>

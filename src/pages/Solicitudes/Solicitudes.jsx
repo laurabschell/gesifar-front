@@ -38,6 +38,12 @@ export const Solicitudes = () => {
 
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
+    const [searchResponsable, setSearchResponsable] = useState('');
+    const [searchProfesional, setSearchProfesional] = useState('');
+    const [searchArea, setSearchArea] = useState('');
+    const [searchFecha, setSearchFecha] = useState('');
+    const [searchDetalle, setSearchDetalle] = useState('');
+    const [searchEstado, setSearchEstado] = useState('');
 
     const [rows, initRow] = useState([]);
 
@@ -285,6 +291,45 @@ export const Solicitudes = () => {
                             </button>
                         </div>
                     </div>
+
+                    <div class="input-group" className='col-md-12'>
+                        <h5>Consultar por campo:</h5>
+                        <div class="row">
+
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchResponsable(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Responsable</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchProfesional(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Profesional</label>
+                            </div>    
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchArea(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Area</label>
+                            </div>  
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchFecha(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Fecha</label>
+                            </div>  
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchDetalle(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Detalle</label>
+                            </div> 
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchEstado(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Estado</label>
+                            </div> 
+                        </div>
+                    </div>
+
+
                 </div>
                 <div className='row mt-4'>
                     <div className='col-12 col-lg-12 offset-0'>
@@ -296,18 +341,26 @@ export const Solicitudes = () => {
                                         <th>Profesional Solicitante</th>
                                         <th>Area</th>
                                         <th>Fecha</th>
+                                        <th>Detalle</th>
+                                        
                                         <th>Estado</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody className='table-group-divider'>
-                                    {solicitudes.map((solicitud) => (
+                                    {solicitudes.filter((solicitud) =>
+                                        solicitud.personal_resp.toLowerCase().includes(searchResponsable.toLowerCase()) && solicitud.profesional_solicitante.toLowerCase().includes(searchProfesional.toLowerCase()) && solicitud.area.toLowerCase().includes(searchArea.toLowerCase()) && solicitud.fecha.includes(searchFecha) && solicitud.detalle.toLowerCase().includes(searchDetalle.toLowerCase()) && solicitud.estado.toLowerCase().includes(searchEstado.toLowerCase())
+                                    ).map((solicitud) => (
                                         <tr key={solicitud.id}>
                                             {/* <td>{(i + 1)}</td> */}
                                             <td>{solicitud.personal_resp}</td>
                                             <td>{solicitud.profesional_solicitante}</td>
                                             <td>{solicitud.area}</td>
                                             <td>{solicitud.fecha}</td>
+                                            <td width="200">{solicitud.detalle.split(';').map(t => {
+                                                return <div className='textItem'>{t}</div>;
+                                            })}</td>
+                                            
                                             <td>
                                                 {solicitud.estado === "PENDIENTE" ?
                                                     <Chip label={solicitud.estado} color="warning" /> :
