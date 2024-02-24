@@ -36,6 +36,12 @@ export const Ordenes = () => {
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
 
+    const [searchResponsable, setSearchResponsable] = useState('');
+    const [searchProveedor, setSearchProveedor] = useState('');
+    const [searchFecha, setSearchFecha] = useState('');
+    const [searchDetalle, setSearchDetalle] = useState('');
+    const [searchEstado, setSearchEstado] = useState('');
+   
     const [rows, initRow] = useState([]);
 
     const addRowTable = () => {
@@ -260,6 +266,39 @@ export const Ordenes = () => {
                             </button>
                         </div>
                     </div>
+
+                    <div class="input-group" className='col-md-12'>
+                        <h5>Consultar por campo:</h5>
+                        <div class="row">
+
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchResponsable(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Responsable</label>
+                            </div>
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchProveedor(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Proveedor</label>
+                            </div>    
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchFecha(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Fecha</label>
+                            </div>  
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchDetalle(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Detalle</label>
+                            </div> 
+                            <div class="form-outline" className=' col-md-2' data-mdb-input-init>
+                                <input type="search" id="form1" class="form-control"
+                                onChange={(e) => setSearchEstado(e.target.value)}/>
+                                <label class="form-label" for="form1">Consulta por Estado</label>
+                            </div> 
+                        </div>
+                    </div>
+
                 </div>
                 <div className='row mt-4'>
                     <div className='col-12 col-lg-12 offset-0'>
@@ -270,17 +309,23 @@ export const Ordenes = () => {
                                         <th>Personal Responsable</th>
                                         <th>Proveedor</th>
                                         <th>Fecha</th>
+                                        <th>Detalle</th>
+                                        
                                         <th>Estado</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody className='table-group-divider'>
-                                    {ordenes.map((orden) => (
+                                    {ordenes.filter((orden) =>
+                                        orden.personal_resp.toLowerCase().includes(searchResponsable.toLowerCase()) && orden.proveedor.toLowerCase().includes(searchProveedor.toLowerCase()) && orden.fecha.includes(searchFecha) && orden.detalle.toLowerCase().includes(searchDetalle.toLowerCase()) && orden.estado.toLowerCase().includes(searchEstado.toLowerCase())
+                                    ).map((orden) => (
                                         <tr key={orden.id}>
-                                            {/* <td>{(i + 1)}</td> */}                                            
                                             <td>{orden.personal_resp}</td>
                                             <td>{orden.proveedor}</td>
-                                            <td>{orden.fecha}</td>                                            
+                                            <td>{orden.fecha}</td>        
+                                            <td width="200">{orden.detalle.split(';').map(t => {
+                                                return <div className='textItem'>{t}</div>;
+                                            })}</td>
                                             <td>
                                                 {orden.estado === "PENDIENTE" ?
                                                     <Chip label={orden.estado} color="warning" /> :

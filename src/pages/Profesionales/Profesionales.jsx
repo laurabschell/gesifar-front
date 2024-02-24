@@ -28,6 +28,7 @@ export const Profesionales = () => {
 
     const [operation, setOperation] = useState(1);
     const [title, setTitle] = useState('');
+    
     const [searchDNI, setSearchDNI] = useState('');
     const [searchName, setSearchName] = useState('');
     const [searchLastname, setSearchLastname] = useState('');
@@ -226,7 +227,7 @@ export const Profesionales = () => {
                                 </thead>
                                 <tbody className='table-group-divider'>
                                     {professionals.filter((item) =>
-                                        item.dni.includes(searchDNI) && item.nombre.toLowerCase().includes(searchName) && item.apellido.toLowerCase().includes(searchLastname) && item.profesion.toLowerCase().includes(searchProf) && item.area.toLowerCase().includes(searchArea)
+                                        item.dni.includes(searchDNI) && item.nombre.toLowerCase().includes(searchName.toLowerCase()) && item.apellido.toLowerCase().includes(searchLastname.toLowerCase()) && item.profesion.toLowerCase().includes(searchProf.toLowerCase()) && item.area.toLowerCase().includes(searchArea.toLowerCase())
                                     ).map((item) => (
                                         <tr key={item.id}>
                                             <td>{item.dni}</td>
