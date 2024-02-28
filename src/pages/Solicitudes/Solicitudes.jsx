@@ -11,6 +11,8 @@ import Table from "../../components/table"
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 import { Chip } from '@mui/material';
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 export const Solicitudes = () => {
     const urlSolicitudes = 'http://gesifar-api.test/solicitudesController.php';
@@ -278,6 +280,15 @@ export const Solicitudes = () => {
         });
     }
 
+    const generatePDF = async () => {
+        const doc = new jsPDF({ orientation: "portrait" });
+
+        doc.autoTable({
+            html: ".table-to-print",
+        });
+
+        doc.save("solicitudes-registradas-GESIFAR.pdf");
+    };
 
     return (
         <Layout title="Gestion de Solicitudes">
@@ -334,8 +345,8 @@ export const Solicitudes = () => {
                 <div className='row mt-4'>
                     <div className='col-12 col-lg-12 offset-0'>
                         <div className='table-responsive'>
-                            <table className='table table-bordered'>
-                                <thead>
+                        <table className='table-to-print table table-bordered table-striped table-fixed'>
+                                <thead class="sticky-top">
                                     <tr>
                                         <th>Personal Responsable</th>
                                         <th>Profesional Solicitante</th>
@@ -387,6 +398,9 @@ export const Solicitudes = () => {
                     </div>
                 </div>
             </div>
+
+            <button type="button" onClick={generatePDF} data-toggle="tooltip" data-placement="right" title="Generar listado filtrado en formato PDF" class="btn btn-success btn-lg"><i class="fa-regular fa-file-pdf"></i> Imprimir Resultados</button>
+                                    
             <div id='modalProducts' className='modal fade' aria-hidden='true'>
                 <div className='modal-dialog modal-lg'>
                     <div className='modal-content'>

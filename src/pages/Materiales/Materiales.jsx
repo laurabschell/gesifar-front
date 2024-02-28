@@ -8,6 +8,8 @@ import { show_alerta } from '../../functions';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment-timezone';
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 export const Materiales = () => { 
 
@@ -28,6 +30,20 @@ export const Materiales = () => {
     const [searchForma, setSearchForma] = useState('');
     const [searchPres, setSearchPres] = useState('');
     const [searchFecha, setSearchFecha] = useState('');
+
+    const [isDisabled, setIsDisabled] = useState(false);
+    //handleChangeTipo
+    const handleChangeTipo = e => {
+        //console.log('Label 👉️', e.target.selectedOptions[0].label);
+        console.log(e.target.value);
+        setTipo(e.target.value);
+        setIsDisabled(e.target.value==="Insumo");
+        if (e.target.value==="Insumo") {
+            setForma("");
+            setPresentacion("");
+        }                      
+      }; 
+      
 
     useEffect(() => {
         getProducts();
@@ -73,6 +89,7 @@ export const Materiales = () => {
             let d = new Date(fecha_venc);
             d.setMinutes(d.getMinutes() + d.getTimezoneOffset());          
             setFecha_venc(d);     
+            setIsDisabled(tipo==="Insumo");
 
         }
         window.setTimeout(function () {
@@ -89,10 +106,10 @@ export const Materiales = () => {
         else if (tipo.trim() === '') {
             show_alerta('Indique el Tipo', 'warning');
         }
-        else if (forma.trim() === '') {
+        else if (forma.trim() === '' && !isDisabled) {
             show_alerta('Escriba la Forma Farmaceutica', 'warning');
         }
-        else if (presentacion.trim() === '') {
+        else if (presentacion.trim() === '' && !isDisabled) {
             show_alerta('Escriba la Presentacion', 'warning');
         }
         else {
@@ -153,6 +170,15 @@ export const Materiales = () => {
         });
     }
 
+    const generatePDF = async () => {
+        const doc = new jsPDF({ orientation: "portrait" });
+
+        doc.autoTable({
+            html: ".table-to-print",
+        });
+
+        doc.save("materiales-registrados-GESIFAR.pdf");
+    };
 
     return (
         <Layout>
@@ -176,7 +202,8 @@ export const Materiales = () => {
                                 <label class="form-label" for="form1">Consulta por Nombre</label>
                             </div>
                             <div class="form-outline" className=' col-md-2' data-mdb-input-init>
-                                <input type="search" id="form1" class="form-control" onChange={(e) => setSearchTipo(e.target.value)} />
+                                <input type="search" id="form1" class="form-control" onChange={(e) =>
+                                    setSearchTipo(e.target.value)} />
                                 <label class="form-label" for="form1">Consulta por Tipo</label>
                             </div>
                             <div class="form-outline" className=' col-md-2' data-mdb-input-init>
@@ -199,8 +226,8 @@ export const Materiales = () => {
                 <div className='row mt-4'>
                     <div className='col-12 col-lg-12 offset-0'>
                         <div className='table-responsive'>
-                            <table className='table table-bordered'>
-                                <thead>
+                        <table className='table-to-print table table-bordered table-striped table-fixed'>
+                                <thead class="sticky-top">
                                     <tr>
                                         {/* <th>id</th> */}
                                         <th>Nombre</th>
@@ -248,6 +275,8 @@ export const Materiales = () => {
                     </div>
                 </div>
             </div>
+            <button type="button" onClick={generatePDF} data-toggle="tooltip" data-placement="right" title="Generar listado filtrado en formato PDF" class="btn btn-success btn-lg"><i class="fa-regular fa-file-pdf"></i> Imprimir Resultados</button>
+
             <div id='modalProducts' className='modal fade' aria-hidden='true'>
                 <div className='modal-dialog'>
                     <div className='modal-content'>
@@ -267,10 +296,10 @@ export const Materiales = () => {
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Tipo</span>                      
                                 <select id='tipo' value={tipo}
-                                    onChange={(e) =>{
-                                        setTipo(e.target.value)                             
-                                    }
-                                    }>
+                                    
+                                    onChange={handleChangeTipo}
+                                        
+                                >
                                     <option value="">Seleccione</option>
                                     <option value="Medicamento">Medicamento</option>
                                     <option value="Insumo">Insumo</option>
@@ -280,12 +309,14 @@ export const Materiales = () => {
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Forma</span>
                                 <input type='text' id='forma' className='form-control' placeholder='Forma' value={forma}
-                                    onChange={(e) => setForma(e.target.value)}></input>
+                                    onChange={(e) => setForma(e.target.value)}
+                                    disabled={isDisabled}></input>
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Presentacion</span>
                                 <input type='text' id='presentacion' className='form-control' placeholder='Presentacion' value={presentacion}
-                                    onChange={(e) => setPresentacion(e.target.value)}></input>
+                                    onChange={(e) => setPresentacion(e.target.value)}
+                                    disabled={isDisabled}></input>
                             </div>
                             <div className='input-group mb-3'>
                                 <span className='input-group-text'>Fecha Venc</span>
