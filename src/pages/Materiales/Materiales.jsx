@@ -181,11 +181,10 @@ export const Materiales = () => {
     };
 
     return (
-        <Layout>
-            <div className={style.title}>Gestion de Materiales</div>
+        <Layout title="Gestion de Materiales">
             <div className='container-fluid'>
                 <div className='row mt-4'>
-                    <div className='col-md-4 offset-md-9'>
+                    <div className='col-md-4 offset-md-8'>
                         <div className='d-grid mx-auto'>
                             <button onClick={() => openModal(1)} className='btn btn-lg btn-dark' data-bs-toggle='modal' data-bs-target='#modalProducts'>
                                 <i className='fa-solid fa-circle-plus'></i> Añadir nuevo Material
